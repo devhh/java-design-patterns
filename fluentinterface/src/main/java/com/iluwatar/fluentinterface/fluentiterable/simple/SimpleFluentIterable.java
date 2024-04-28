@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.fluentinterface.fluentiterable.simple;
 
 import com.iluwatar.fluentinterface.fluentiterable.FluentIterable;
@@ -32,6 +33,7 @@ import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import lombok.RequiredArgsConstructor;
 
 /**
  * This is a simple implementation of the FluentIterable interface. It evaluates all chained
@@ -39,18 +41,10 @@ import java.util.function.Predicate;
  *
  * @param <E> the type of the objects the iteration is about
  */
+@RequiredArgsConstructor
 public class SimpleFluentIterable<E> implements FluentIterable<E> {
 
   private final Iterable<E> iterable;
-
-  /**
-   * This constructor creates a copy of a given iterable's contents.
-   *
-   * @param iterable the iterable this interface copies to work on.
-   */
-  protected SimpleFluentIterable(Iterable<E> iterable) {
-    this.iterable = iterable;
-  }
 
   /**
    * Filters the contents of Iterable using the given predicate, leaving only the ones which satisfy
@@ -62,9 +56,9 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    */
   @Override
   public final FluentIterable<E> filter(Predicate<? super E> predicate) {
-    Iterator<E> iterator = iterator();
+    var iterator = iterator();
     while (iterator.hasNext()) {
-      E nextElement = iterator.next();
+      var nextElement = iterator.next();
       if (!predicate.test(nextElement)) {
         iterator.remove();
       }
@@ -79,7 +73,7 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    */
   @Override
   public final Optional<E> first() {
-    Iterator<E> resultIterator = first(1).iterator();
+    var resultIterator = first(1).iterator();
     return resultIterator.hasNext() ? Optional.of(resultIterator.next()) : Optional.empty();
   }
 
@@ -92,8 +86,8 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    */
   @Override
   public final FluentIterable<E> first(int count) {
-    Iterator<E> iterator = iterator();
-    int currentCount = 0;
+    var iterator = iterator();
+    var currentCount = 0;
     while (iterator.hasNext()) {
       iterator.next();
       if (currentCount >= count) {
@@ -111,7 +105,7 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    */
   @Override
   public final Optional<E> last() {
-    List<E> list = last(1).asList();
+    var list = last(1).asList();
     if (list.isEmpty()) {
       return Optional.empty();
     }
@@ -127,9 +121,9 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    */
   @Override
   public final FluentIterable<E> last(int count) {
-    int remainingElementsCount = getRemainingElementsCount();
-    Iterator<E> iterator = iterator();
-    int currentIndex = 0;
+    var remainingElementsCount = getRemainingElementsCount();
+    var iterator = iterator();
+    var currentIndex = 0;
     while (iterator.hasNext()) {
       iterator.next();
       if (currentIndex < remainingElementsCount - count) {
@@ -150,11 +144,8 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    */
   @Override
   public final <T> FluentIterable<T> map(Function<? super E, T> function) {
-    List<T> temporaryList = new ArrayList<>();
-    Iterator<E> iterator = iterator();
-    while (iterator.hasNext()) {
-      temporaryList.add(function.apply(iterator.next()));
-    }
+    var temporaryList = new ArrayList<T>();
+    this.forEach(e -> temporaryList.add(function.apply(e)));
     return from(temporaryList);
   }
 
@@ -178,7 +169,7 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
   }
 
   public static <E> FluentIterable<E> fromCopyOf(Iterable<E> iterable) {
-    List<E> copy = FluentIterable.copyToList(iterable);
+    var copy = FluentIterable.copyToList(iterable);
     return new SimpleFluentIterable<>(copy);
   }
 
@@ -204,10 +195,8 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    * @return the count of remaining objects of the current Iterable
    */
   public final int getRemainingElementsCount() {
-    int counter = 0;
-    Iterator<E> iterator = iterator();
-    while (iterator.hasNext()) {
-      iterator.next();
+    var counter = 0;
+    for (var ignored : this) {
       counter++;
     }
     return counter;
@@ -219,10 +208,8 @@ public class SimpleFluentIterable<E> implements FluentIterable<E> {
    * @return a new List with the remaining objects.
    */
   public static <E> List<E> toList(Iterator<E> iterator) {
-    List<E> copy = new ArrayList<>();
-    while (iterator.hasNext()) {
-      copy.add(iterator.next());
-    }
+    var copy = new ArrayList<E>();
+    iterator.forEachRemaining(copy::add);
     return copy;
   }
 }

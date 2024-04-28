@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,64 +22,60 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.sharding;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 /**
  * Unit tests for Shard class.
  */
-public class ShardTest {
+class ShardTest {
 
   private Data data;
 
   private Shard shard;
 
-  @Before
-  public void setup() {
-    data = new Data(1, "test", Data.DataType.type1);
+  @BeforeEach
+  void setup() {
+    data = new Data(1, "test", Data.DataType.TYPE_1);
     shard = new Shard(1);
   }
 
-  @After
-  public void tearDown() {}
-
   @Test
-  public void testStoreData() {
+  void testStoreData() {
     try {
       shard.storeData(data);
       var field = Shard.class.getDeclaredField("dataStore");
       field.setAccessible(true);
-      Map<Integer, Data> dataMap = (Map<Integer, Data>) field.get(shard);
-      Assert.assertEquals(1, dataMap.size());
-      Assert.assertEquals(data, dataMap.get(1));
+      var dataMap = (Map<Integer, Data>) field.get(shard);
+      assertEquals(1, dataMap.size());
+      assertEquals(data, dataMap.get(1));
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      Assert.fail("Fail to modify field access.");
+      fail("Fail to modify field access.");
     }
 
   }
 
   @Test
-  public void testClearData() {
+  void testClearData() {
     try {
-      Map<Integer, Data> dataMap = new HashMap<>();
+      var dataMap = new HashMap<Integer, Data>();
       dataMap.put(1, data);
       var field = Shard.class.getDeclaredField("dataStore");
       field.setAccessible(true);
       field.set(shard, dataMap);
       shard.clearData();
-      dataMap = (Map<Integer, Data>) field.get(shard);
-      Assert.assertEquals(0, dataMap.size());
+      dataMap = (HashMap<Integer, Data>) field.get(shard);
+      assertEquals(0, dataMap.size());
     } catch (NoSuchFieldException | IllegalAccessException e) {
-      Assert.fail("Fail to modify field access.");
+      fail("Fail to modify field access.");
     }
   }
 }

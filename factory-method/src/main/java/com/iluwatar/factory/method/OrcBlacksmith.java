@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.factory.method;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -31,17 +33,20 @@ import java.util.Map;
  */
 public class OrcBlacksmith implements Blacksmith {
 
-  private static Map<WeaponType, OrcWeapon> ORCARSENAL;
+  private static final Map<WeaponType, OrcWeapon> ORCARSENAL;
 
   static {
-    ORCARSENAL = new HashMap<>(WeaponType.values().length);
-    for (WeaponType type : WeaponType.values()) {
-      ORCARSENAL.put(type, new OrcWeapon(type));
-    }
+    ORCARSENAL = new EnumMap<>(WeaponType.class);
+    Arrays.stream(WeaponType.values()).forEach(type -> ORCARSENAL.put(type, new OrcWeapon(type)));
   }
-  
+
   @Override
   public Weapon manufactureWeapon(WeaponType weaponType) {
     return ORCARSENAL.get(weaponType);
+  }
+
+  @Override
+  public String toString() {
+    return "The orc blacksmith";
   }
 }

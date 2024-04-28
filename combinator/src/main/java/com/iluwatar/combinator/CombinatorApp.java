@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.combinator;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -41,12 +41,22 @@ import org.slf4j.LoggerFactory;
  * {@link Finder#and(Finder)}
  * Using them the became possible to get more complex functions {@link Finders}
  */
+@Slf4j
 public class CombinatorApp {
 
-  /**
-   * Logger.
-   */
-  private static final Logger LOGGER = LoggerFactory.getLogger(CombinatorApp.class);
+  private static final String TEXT = """
+            It was many and many a year ago,
+            In a kingdom by the sea,
+            That a maiden there lived whom you may know
+            By the name of ANNABEL LEE;
+            And this maiden she lived with no other thought
+            Than to love and be loved by me.
+            I was a child and she was a child,
+            In this kingdom by the sea;
+            But we loved with a love that was more than love-
+            I and my Annabel Lee;
+            With a love that the winged seraphs of heaven
+            Coveted her and me.""";
 
   /**
    * main.
@@ -63,30 +73,18 @@ public class CombinatorApp {
     res = finder.find(text());
     LOGGER.info("the result of specialized(and) query[{}] is {}", queriesAnd, res);
 
-    finder = Finders.advancedFinder("it was","kingdom","sea");
+    finder = Finders.advancedFinder("it was", "kingdom", "sea");
     res = finder.find(text());
     LOGGER.info("the result of advanced query is {}", res);
 
     res = Finders.filteredFinder(" was ", "many", "child").find(text());
     LOGGER.info("the result of filtered query is {}", res);
 
-
   }
 
   private static String text() {
-    return
-        "It was many and many a year ago,\n"
-            + "In a kingdom by the sea,\n"
-            + "That a maiden there lived whom you may know\n"
-            + "By the name of ANNABEL LEE;\n"
-            + "And this maiden she lived with no other thought\n"
-            + "Than to love and be loved by me.\n"
-            + "I was a child and she was a child,\n"
-            + "In this kingdom by the sea;\n"
-            + "But we loved with a love that was more than love-\n"
-            + "I and my Annabel Lee;\n"
-            + "With a love that the winged seraphs of heaven\n"
-            + "Coveted her and me.";
+
+    return TEXT;
   }
 
 }

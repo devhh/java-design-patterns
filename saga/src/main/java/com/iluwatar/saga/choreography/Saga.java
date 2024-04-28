@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.saga.choreography;
 
 import java.util.ArrayList;
@@ -28,13 +29,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Saga representation.
- * Saga consists of chapters.
- * Every ChoreographyChapter is executed a certain service.
+ * Saga representation. Saga consists of chapters. Every ChoreographyChapter is executed a certain
+ * service.
  */
 public class Saga {
 
-  private List<Chapter> chapters;
+  private final List<Chapter> chapters;
   private int pos;
   private boolean forward;
   private boolean finished;
@@ -61,6 +61,7 @@ public class Saga {
 
   /**
    * add chapter to saga.
+   *
    * @param name chapter name
    * @return this
    */
@@ -71,6 +72,7 @@ public class Saga {
 
   /**
    * set value to last chapter.
+   *
    * @param value invalue
    * @return this
    */
@@ -84,6 +86,7 @@ public class Saga {
 
   /**
    * get value from current chapter.
+   *
    * @return value
    */
   public Object getCurrentValue() {
@@ -92,6 +95,7 @@ public class Saga {
 
   /**
    * set value to current chapter.
+   *
    * @param value to set
    */
   public void setCurrentValue(Object value) {
@@ -100,6 +104,7 @@ public class Saga {
 
   /**
    * set status for current chapter.
+   *
    * @param result to set
    */
   public void setCurrentStatus(ChapterResult result) {
@@ -145,11 +150,11 @@ public class Saga {
   }
 
   /**
-   * Class presents a chapter status and incoming
-   * parameters(incoming parameter transforms to outcoming parameter).
+   * Class presents a chapter status and incoming parameters(incoming parameter transforms to
+   * outcoming parameter).
    */
   public static class Chapter {
-    private String name;
+    private final String name;
     private ChapterResult result;
     private Object inValue;
 
@@ -173,6 +178,7 @@ public class Saga {
 
     /**
      * set result.
+     *
      * @param result {@link ChapterResult}
      */
     public void setResult(ChapterResult result) {
@@ -181,6 +187,7 @@ public class Saga {
 
     /**
      * the result for chapter is good.
+     *
      * @return true if is good otherwise bad
      */
     public boolean isSuccess() {

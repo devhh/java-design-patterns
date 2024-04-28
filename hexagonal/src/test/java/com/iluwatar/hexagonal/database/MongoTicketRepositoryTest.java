@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,8 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.hexagonal.database;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.iluwatar.hexagonal.domain.LotteryNumbers;
 import com.iluwatar.hexagonal.domain.LotteryTicket;
@@ -32,11 +36,6 @@ import com.mongodb.MongoClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for Mongo based ticket repository
@@ -53,7 +52,7 @@ class MongoTicketRepositoryTest {
   @BeforeEach
   void init() {
     MongoConnectionPropertiesLoader.load();
-    MongoClient mongoClient = new MongoClient(System.getProperty("mongo-host"),
+    var mongoClient = new MongoClient(System.getProperty("mongo-host"),
         Integer.parseInt(System.getProperty("mongo-port")));
     mongoClient.dropDatabase(TEST_DB);
     mongoClient.close();
@@ -63,8 +62,8 @@ class MongoTicketRepositoryTest {
 
   @Test
   void testSetup() {
-    assertEquals(1, repository.getCountersCollection().count());
-    assertEquals(0, repository.getTicketsCollection().count());
+    assertEquals(1, repository.getCountersCollection().countDocuments());
+    assertEquals(0, repository.getTicketsCollection().countDocuments());
   }
 
   @Test
@@ -77,22 +76,22 @@ class MongoTicketRepositoryTest {
   @Test
   void testCrudOperations() {
     // create new lottery ticket and save it
-    PlayerDetails details = new PlayerDetails("foo@bar.com", "123-123", "07001234");
-    LotteryNumbers random = LotteryNumbers.createRandom();
-    LotteryTicket original = new LotteryTicket(new LotteryTicketId(), details, random);
-    Optional<LotteryTicketId> saved = repository.save(original);
-    assertEquals(1, repository.getTicketsCollection().count());
+    var details = new PlayerDetails("foo@bar.com", "123-123", "07001234");
+    var random = LotteryNumbers.createRandom();
+    var original = new LotteryTicket(new LotteryTicketId(), details, random);
+    var saved = repository.save(original);
+    assertEquals(1, repository.getTicketsCollection().countDocuments());
     assertTrue(saved.isPresent());
     // fetch the saved lottery ticket from database and check its contents
-    Optional<LotteryTicket> found = repository.findById(saved.get());
+    var found = repository.findById(saved.get());
     assertTrue(found.isPresent());
-    LotteryTicket ticket = found.get();
+    var ticket = found.get();
     assertEquals("foo@bar.com", ticket.getPlayerDetails().getEmail());
     assertEquals("123-123", ticket.getPlayerDetails().getBankAccount());
     assertEquals("07001234", ticket.getPlayerDetails().getPhoneNumber());
-    assertEquals(original.getNumbers(), ticket.getNumbers());
+    assertEquals(original.getLotteryNumbers(), ticket.getLotteryNumbers());
     // clear the collection
     repository.deleteAll();
-    assertEquals(0, repository.getTicketsCollection().count());
+    assertEquals(0, repository.getTicketsCollection().countDocuments());
   }
 }

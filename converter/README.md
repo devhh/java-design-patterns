@@ -1,27 +1,27 @@
 ---
-layout: pattern
 title: Converter
-folder: converter
-permalink: /patterns/converter/
-categories: Business Tier
-tags:
- - Java
- - Difficulty-Beginner
+category: Structural
+language: en
+tag:
+    - Compatibility
+    - Data transformation
+    - Object mapping
 ---
 
-## Intent
-The purpose of the Converter Pattern is to provide a generic, common way of bidirectional
-conversion between corresponding types, allowing a clean implementation in which the types do not
-need to be aware of each other. Moreover, the Converter Pattern introduces bidirectional collection
-mapping, reducing a boilerplate code to minimum.
+## Also known as
 
-![alt text](./etc/converter.png "Converter Pattern")
+* Mapper
+* Translator
+
+## Intent
+
+The purpose of the Converter pattern is to provide a generic, common way of bidirectional conversion between corresponding types, allowing a clean implementation in which the types do not need to be aware of each other. Moreover, the Converter pattern introduces bidirectional collection mapping, reducing a boilerplate code to minimum.
 
 ## Explanation
 
 Real world example
 
-> In real world applications it is often the case that database layer consists of entities that need to be mapped into DTOs for use on the business logic layer. Similar mapping is done for potentially huge amount of classes and we need a generic way to achieve this.
+> In real world applications it is often the case that database layer consists of entities that need to be mapped into DTOs for use on the business logic layer. Similar mapping is done for potentially huge amount of classes, and we need a generic way to achieve this.
 
 In plain words
 
@@ -34,29 +34,29 @@ We need a generic solution for the mapping problem. To achieve this, let's intro
 ```java
 public class Converter<T, U> {
 
-  private final Function<T, U> fromDto;
-  private final Function<U, T> fromEntity;
+    private final Function<T, U> fromDto;
+    private final Function<U, T> fromEntity;
 
-  public Converter(final Function<T, U> fromDto, final Function<U, T> fromEntity) {
-    this.fromDto = fromDto;
-    this.fromEntity = fromEntity;
-  }
+    public Converter(final Function<T, U> fromDto, final Function<U, T> fromEntity) {
+        this.fromDto = fromDto;
+        this.fromEntity = fromEntity;
+    }
 
-  public final U convertFromDto(final T dto) {
-    return fromDto.apply(dto);
-  }
+    public final U convertFromDto(final T dto) {
+        return fromDto.apply(dto);
+    }
 
-  public final T convertFromEntity(final U entity) {
-    return fromEntity.apply(entity);
-  }
+    public final T convertFromEntity(final U entity) {
+        return fromEntity.apply(entity);
+    }
 
-  public final List<U> createFromDtos(final Collection<T> dtos) {
-    return dtos.stream().map(this::convertFromDto).collect(Collectors.toList());
-  }
+    public final List<U> createFromDtos(final Collection<T> dtos) {
+        return dtos.stream().map(this::convertFromDto).collect(Collectors.toList());
+    }
 
-  public final List<T> createFromEntities(final Collection<U> entities) {
-    return entities.stream().map(this::convertFromEntity).collect(Collectors.toList());
-  }
+    public final List<T> createFromEntities(final Collection<U> entities) {
+        return entities.stream().map(this::convertFromEntity).collect(Collectors.toList());
+    }
 }
 ```
 
@@ -65,30 +65,68 @@ The specialized converters inherit from this base class as follows.
 ```java
 public class UserConverter extends Converter<UserDto, User> {
 
-  public UserConverter() {
-    super(userDto -> new User(userDto.getFirstName(), userDto.getLastName(), userDto.isActive(),
-            userDto.getEmail()),
-        user -> new UserDto(user.getFirstName(), user.getLastName(), user.isActive(),
-            user.getUserId()));
-  }
+    public UserConverter() {
+        super(UserConverter::convertToEntity, UserConverter::convertToDto);
+    }
+
+    private static UserDto convertToDto(User user) {
+        return new UserDto(user.firstName(), user.lastName(), user.active(), user.userId());
+    }
+
+    private static User convertToEntity(UserDto dto) {
+        return new User(dto.firstName(), dto.lastName(), dto.active(), dto.email());
+    }
 }
 ```
 
-Now mapping between User and UserDto becomes trivial.
+Now mapping between `User` and `UserDto` becomes trivial.
 
 ```java
-Converter<UserDto, User> userConverter = new UserConverter();
-UserDto dtoUser = new UserDto("John", "Doe", true, "whatever[at]wherever.com");
-User user = userConverter.convertFromDto(dtoUser);
+var userConverter=new UserConverter();
+        var dtoUser=new UserDto("John","Doe",true,"whatever[at]wherever.com");
+        var user=userConverter.convertFromDto(dtoUser);
 ```
 
+## Class diagram
+
+![alt text](./etc/converter.png "Converter Pattern")
+
 ## Applicability
+
 Use the Converter Pattern in the following situations:
 
-* When you have types that logically correspond which other and you need to convert entities between them
-* When you want to provide different ways of types conversions depending on a context
-* Whenever you introduce a DTO (Data transfer object), you will probably need to convert it into the domain equivalence
+* When there are types that logically correspond with each other, and there is a need to convert between them.
+* In applications that interact with external systems or services that require data in a specific format.
+* For legacy systems integration where data models differ significantly from newer systems.
+* When aiming to encapsulate conversion logic to promote single responsibility and cleaner code.
+
+## Known Uses
+
+* Data Transfer Objects (DTOs) conversions in multi-layered applications.
+* Adapting third-party data structures or API responses to internal models.
+* ORM (Object-Relational Mapping) frameworks for mapping between database records and domain objects.
+* Microservices architecture for data exchange between different services.
+
+## Consequences
+
+Benefits:
+
+* Separation of Concerns: Encapsulates conversion logic in a single component, keeping the rest of the application unaware of the conversion details.
+* Reusability: Converter components can be reused across the application or even in different applications.
+* Flexibility: Makes it easy to add new conversions without impacting existing code, adhering to the [Open/Closed Principle](https://java-design-patterns.com/principles/#open-closed-principle).
+* Interoperability: Facilitates communication between different systems or application layers by translating data formats.
+
+Trade-offs:
+
+* Overhead: Introducing converters can add complexity and potential performance overhead, especially in systems with numerous data formats.
+* Duplication: There's a risk of duplicating model definitions if not carefully managed, leading to increased maintenance.
+
+## Related Patterns
+
+* [Adapter](https://java-design-patterns.com/patterns/adapter/): Similar in intent to adapting interfaces, but Converter focuses on data models.
+* [Facade](https://java-design-patterns.com/patterns/facade/): Provides a simplified interface to a complex system, which might involve data conversion.
+* [Strategy](https://java-design-patterns.com/patterns/strategy/): Converters can use different strategies for conversion, especially when multiple formats are involved.
 
 ## Credits
 
-* [Converter](http://www.xsolve.pl/blog/converter-pattern-in-java-8/)
+* [Converter Pattern in Java 8](http://www.xsolve.pl/blog/converter-pattern-in-java-8/)

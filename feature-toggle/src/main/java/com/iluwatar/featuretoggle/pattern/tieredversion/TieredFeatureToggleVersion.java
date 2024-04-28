@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.featuretoggle.pattern.tieredversion;
 
 import com.iluwatar.featuretoggle.pattern.Service;
@@ -28,11 +29,11 @@ import com.iluwatar.featuretoggle.user.User;
 import com.iluwatar.featuretoggle.user.UserGroup;
 
 /**
- * This example of the Feature Toogle pattern shows how it could be implemented based on a {@link
- * User}. Therefore showing its use within a tiered application where the paying users get access to
+ * This example of the Feature Toggle pattern shows how it could be implemented based on a {@link
+ * User}. Therefore, showing its use within a tiered application where the paying users get access to
  * different content or better versions of features. So in this instance a {@link User} is passed in
  * and if they are found to be on the {@link UserGroup#isPaid(User)} they are welcomed with a
- * personalised message. While the other is more generic. However this pattern is limited to simple
+ * personalised message. While the other is more generic. However, this pattern is limited to simple
  * examples such as the one below.
  *
  * @see Service
@@ -65,7 +66,7 @@ public class TieredFeatureToggleVersion implements Service {
 
   /**
    * Method that checks if the welcome message to be returned is the enhanced version. For this
-   * instance as the logic is driven by the user group. This method is a little redundant. However
+   * instance as the logic is driven by the user group. This method is a little redundant. However,
    * can be used to show that there is an enhanced version available.
    *
    * @return Boolean value {@code true} if enhanced.

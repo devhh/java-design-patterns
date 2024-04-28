@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.reactor.app;
 
 import com.iluwatar.reactor.framework.AbstractNioChannel;
@@ -89,8 +90,8 @@ import java.util.List;
 public class App {
 
   private NioReactor reactor;
-  private List<AbstractNioChannel> channels = new ArrayList<>();
-  private Dispatcher dispatcher;
+  private final List<AbstractNioChannel> channels = new ArrayList<>();
+  private final Dispatcher dispatcher;
 
   /**
    * Creates an instance of App which will use provided dispatcher for dispatching events on
@@ -124,15 +125,18 @@ public class App {
      * This represents application specific business logic that dispatcher will call on appropriate
      * events. These events are read events in our example.
      */
-    LoggingHandler loggingHandler = new LoggingHandler();
+    var loggingHandler = new LoggingHandler();
 
     /*
      * Our application binds to multiple channels and uses same logging handler to handle incoming
      * log requests.
      */
-    reactor.registerChannel(tcpChannel(6666, loggingHandler))
-        .registerChannel(tcpChannel(6667, loggingHandler))
-        .registerChannel(udpChannel(6668, loggingHandler)).start();
+    reactor
+        .registerChannel(tcpChannel(16666, loggingHandler))
+        .registerChannel(tcpChannel(16667, loggingHandler))
+        .registerChannel(udpChannel(16668, loggingHandler))
+        .registerChannel(udpChannel(16669, loggingHandler))
+        .start();
   }
 
   /**
@@ -144,20 +148,20 @@ public class App {
   public void stop() throws InterruptedException, IOException {
     reactor.stop();
     dispatcher.stop();
-    for (AbstractNioChannel channel : channels) {
+    for (var channel : channels) {
       channel.getJavaChannel().close();
     }
   }
 
   private AbstractNioChannel tcpChannel(int port, ChannelHandler handler) throws IOException {
-    NioServerSocketChannel channel = new NioServerSocketChannel(port, handler);
+    var channel = new NioServerSocketChannel(port, handler);
     channel.bind();
     channels.add(channel);
     return channel;
   }
 
   private AbstractNioChannel udpChannel(int port, ChannelHandler handler) throws IOException {
-    NioDatagramChannel channel = new NioDatagramChannel(port, handler);
+    var channel = new NioDatagramChannel(port, handler);
     channel.bind();
     channels.add(channel);
     return channel;

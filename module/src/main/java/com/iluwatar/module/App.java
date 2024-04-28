@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.module;
 
 import java.io.FileNotFoundException;
@@ -37,6 +38,8 @@ import java.io.FileNotFoundException;
  */
 public class App {
 
+  private static final String ERROR = "Error";
+  private static final String MESSAGE = "Message";
   public static FileLoggerModule fileLoggerModule;
   public static ConsoleLoggerModule consoleLoggerModule;
 
@@ -65,18 +68,16 @@ public class App {
 
   /**
    * Following method is main executor.
-   *
-   * @param args for providing default program arguments
    */
-  public static void execute(final String... args) {
+  public static void execute() {
 
     /* Send logs on file system */
-    fileLoggerModule.printString("Message");
-    fileLoggerModule.printErrorString("Error");
+    fileLoggerModule.printString(MESSAGE);
+    fileLoggerModule.printErrorString(ERROR);
 
     /* Send logs on console */
-    consoleLoggerModule.printString("Message");
-    consoleLoggerModule.printErrorString("Error");
+    consoleLoggerModule.printString(MESSAGE);
+    consoleLoggerModule.printErrorString(ERROR);
   }
 
   /**
@@ -88,7 +89,7 @@ public class App {
    */
   public static void main(final String... args) throws FileNotFoundException {
     prepare();
-    execute(args);
+    execute();
     unprepare();
   }
 }

@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.specification.creature;
 
 import com.iluwatar.specification.property.Color;
@@ -33,11 +34,11 @@ import com.iluwatar.specification.property.Size;
  */
 public abstract class AbstractCreature implements Creature {
 
-  private String name;
-  private Size size;
-  private Movement movement;
-  private Color color;
-  private Mass mass;
+  private final String name;
+  private final Size size;
+  private final Movement movement;
+  private final Color color;
+  private final Mass mass;
 
   /**
    * Constructor.

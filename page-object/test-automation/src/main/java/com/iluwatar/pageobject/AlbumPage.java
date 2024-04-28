@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.pageobject;
 
-import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.html.HtmlNumberInput;
-import com.gargoylesoftware.htmlunit.html.HtmlOption;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlSelect;
-import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
-import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.htmlunit.WebClient;
+import org.htmlunit.html.HtmlNumberInput;
+import org.htmlunit.html.HtmlPage;
+import org.htmlunit.html.HtmlSelect;
+import org.htmlunit.html.HtmlSubmitInput;
+import org.htmlunit.html.HtmlTextInput;
 
 /**
  * Page Object encapsulating the Album Page (album-page.html)
  */
+@Slf4j
 public class AlbumPage extends Page {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(AlbumPage.class);
   private static final String ALBUM_PAGE_HTML_FILE = "album-page.html";
   private static final String PAGE_URL = "file:" + AUT_PATH + ALBUM_PAGE_HTML_FILE;
 
@@ -63,7 +61,7 @@ public class AlbumPage extends Page {
     try {
       page = this.webClient.getPage(PAGE_URL);
     } catch (IOException e) {
-      LOGGER.error("An error occured on navigateToPage.", e);
+      LOGGER.error("An error occurred on navigateToPage.", e);
     }
     return this;
   }
@@ -85,7 +83,7 @@ public class AlbumPage extends Page {
    * @return {@link AlbumPage}
    */
   public AlbumPage changeAlbumTitle(String albumTitle) {
-    HtmlTextInput albumTitleInputTextField = (HtmlTextInput) page.getElementById("albumTitle");
+    var albumTitleInputTextField = (HtmlTextInput) page.getElementById("albumTitle");
     albumTitleInputTextField.setText(albumTitle);
     return this;
   }
@@ -98,7 +96,7 @@ public class AlbumPage extends Page {
    * @return {@link AlbumPage}
    */
   public AlbumPage changeArtist(String artist) {
-    HtmlTextInput artistInputTextField = (HtmlTextInput) page.getElementById("albumArtist");
+    var artistInputTextField = (HtmlTextInput) page.getElementById("albumArtist");
     artistInputTextField.setText(artist);
     return this;
   }
@@ -111,8 +109,8 @@ public class AlbumPage extends Page {
    * @return {@link AlbumPage}
    */
   public AlbumPage changeAlbumYear(int year) {
-    HtmlSelect albumYearSelectOption = (HtmlSelect) page.getElementById("albumYear");
-    HtmlOption yearOption = albumYearSelectOption.getOptionByValue(Integer.toString(year));
+    var albumYearSelectOption = (HtmlSelect) page.getElementById("albumYear");
+    var yearOption = albumYearSelectOption.getOptionByValue(Integer.toString(year));
     albumYearSelectOption.setSelectedAttribute(yearOption, true);
     return this;
   }
@@ -125,7 +123,7 @@ public class AlbumPage extends Page {
    * @return {@link AlbumPage}
    */
   public AlbumPage changeAlbumRating(String albumRating) {
-    HtmlTextInput albumRatingInputTextField = (HtmlTextInput) page.getElementById("albumRating");
+    var albumRatingInputTextField = (HtmlTextInput) page.getElementById("albumRating");
     albumRatingInputTextField.setText(albumRating);
     return this;
   }
@@ -137,8 +135,7 @@ public class AlbumPage extends Page {
    * @return {@link AlbumPage}
    */
   public AlbumPage changeNumberOfSongs(int numberOfSongs) {
-    HtmlNumberInput numberOfSongsNumberField =
-        (HtmlNumberInput) page.getElementById("numberOfSongs");
+    var numberOfSongsNumberField = (HtmlNumberInput) page.getElementById("numberOfSongs");
     numberOfSongsNumberField.setText(Integer.toString(numberOfSongs));
     return this;
   }
@@ -150,11 +147,11 @@ public class AlbumPage extends Page {
    * @return {@link AlbumListPage}
    */
   public AlbumListPage cancelChanges() {
-    HtmlSubmitInput cancelButton = (HtmlSubmitInput) page.getElementById("cancelButton");
+    var cancelButton = (HtmlSubmitInput) page.getElementById("cancelButton");
     try {
       cancelButton.click();
     } catch (IOException e) {
-      LOGGER.error("An error occured on cancelChanges.", e);
+      LOGGER.error("An error occurred on cancelChanges.", e);
     }
     return new AlbumListPage(webClient);
   }
@@ -166,11 +163,11 @@ public class AlbumPage extends Page {
    * @return {@link AlbumPage}
    */
   public AlbumPage saveChanges() {
-    HtmlSubmitInput saveButton = (HtmlSubmitInput) page.getElementById("saveButton");
+    var saveButton = (HtmlSubmitInput) page.getElementById("saveButton");
     try {
       saveButton.click();
     } catch (IOException e) {
-      LOGGER.error("An error occured on saveChanges.", e);
+      LOGGER.error("An error occurred on saveChanges.", e);
     }
     return this;
   }

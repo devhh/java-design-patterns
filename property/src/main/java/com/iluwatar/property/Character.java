@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.property;
 
 import java.util.HashMap;
@@ -61,10 +62,12 @@ public class Character implements Prototype {
 
       @Override
       public void set(Stats stat, Integer val) {
+        // Does Nothing
       }
 
       @Override
       public void remove(Stats stat) {
+        // Does Nothing.
       }
     };
   }
@@ -93,7 +96,7 @@ public class Character implements Prototype {
 
   @Override
   public Integer get(Stats stat) {
-    boolean containsValue = properties.containsKey(stat);
+    var containsValue = properties.containsKey(stat);
     if (containsValue) {
       return properties.get(stat);
     } else {
@@ -118,7 +121,7 @@ public class Character implements Prototype {
 
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder();
+    var builder = new StringBuilder();
     if (name != null) {
       builder.append("Player: ").append(name).append('\n');
     }
@@ -128,8 +131,8 @@ public class Character implements Prototype {
     }
 
     builder.append("Stats:\n");
-    for (Stats stat : Stats.values()) {
-      Integer value = this.get(stat);
+    for (var stat : Stats.values()) {
+      var value = this.get(stat);
       if (value == null) {
         continue;
       }

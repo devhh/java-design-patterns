@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.objectmother;
 
 /**
@@ -43,7 +44,7 @@ public final class RoyaltyObjectMother {
    * @return A drunk {@link com.iluwatar.objectmother.King}.
    */
   public static King createDrunkKing() {
-    King king = new King();
+    var king = new King();
     king.makeDrunk();
     return king;
   }
@@ -54,7 +55,7 @@ public final class RoyaltyObjectMother {
    * @return A happy {@link com.iluwatar.objectmother.King}.
    */
   public static King createHappyKing() {
-    King king = new King();
+    var king = new King();
     king.makeHappy();
     return king;
   }
@@ -65,7 +66,7 @@ public final class RoyaltyObjectMother {
    * @return A drunk and happy {@link com.iluwatar.objectmother.King}.
    */
   public static King createHappyDrunkKing() {
-    King king = new King();
+    var king = new King();
     king.makeHappy();
     king.makeDrunk();
     return king;
@@ -77,7 +78,7 @@ public final class RoyaltyObjectMother {
    * @return A flirty {@link com.iluwatar.objectmother.Queen}.
    */
   public static Queen createFlirtyQueen() {
-    Queen queen = new Queen();
+    var queen = new Queen();
     queen.setFlirtiness(true);
     return queen;
   }

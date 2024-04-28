@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,23 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.doublechecked.locking;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Inventory.
  */
+@Slf4j
 public class Inventory {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(Inventory.class);
 
   private final int inventorySize;
   private final List<Item> items;
@@ -60,8 +58,8 @@ public class Inventory {
       try {
         if (items.size() < inventorySize) {
           items.add(item);
-          LOGGER.info("{}: items.size()={}, inventorySize={}", Thread.currentThread(), items
-              .size(), inventorySize);
+          var thread = Thread.currentThread();
+          LOGGER.info("{}: items.size()={}, inventorySize={}", thread, items.size(), inventorySize);
           return true;
         }
       } finally {
@@ -77,7 +75,7 @@ public class Inventory {
    * @return All the items of the inventory, as an unmodifiable list
    */
   public final List<Item> getItems() {
-    return Collections.unmodifiableList(items);
+    return List.copyOf(items);
   }
 
 }

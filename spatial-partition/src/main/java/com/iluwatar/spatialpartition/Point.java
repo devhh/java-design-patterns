@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.spatialpartition;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * The abstract Point class which will be extended by any object in the field whose location has to
@@ -61,8 +62,8 @@ public abstract class Point<T> {
   /**
    * handling interactions/collisions with other objects.
    *
-   * @param pointsToCheck contains the objects which need to be checked
-   * @param allPoints     contains hashtable of all points on field at this time
+   * @param toCheck contains the objects which need to be checked
+   * @param all     contains hashtable of all points on field at this time
    */
-  abstract void handleCollision(ArrayList<Point> pointsToCheck, Hashtable<Integer, T> allPoints);
+  abstract void handleCollision(Collection<? extends Point> toCheck, Map<Integer, T> all);
 }

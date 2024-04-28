@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.fluentinterface.fluentiterable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -102,11 +102,8 @@ public interface FluentIterable<E> extends Iterable<E> {
    * @return a list with all objects of the given iterator
    */
   static <E> List<E> copyToList(Iterable<E> iterable) {
-    List<E> copy = new ArrayList<>();
-    Iterator<E> iterator = iterable.iterator();
-    while (iterator.hasNext()) {
-      copy.add(iterator.next());
-    }
+    var copy = new ArrayList<E>();
+    iterable.forEach(copy::add);
     return copy;
   }
 }

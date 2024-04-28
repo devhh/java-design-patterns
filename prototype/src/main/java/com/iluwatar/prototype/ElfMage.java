@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.prototype;
+
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 
 /**
  * ElfMage.
  */
+@EqualsAndHashCode(callSuper = true)
+@RequiredArgsConstructor
 public class ElfMage extends Mage {
 
-  private String helpType;
-
-  public ElfMage(String helpType) {
-    this.helpType = helpType;
-  }
+  private final String helpType;
 
   public ElfMage(ElfMage elfMage) {
     super(elfMage);
@@ -40,34 +42,8 @@ public class ElfMage extends Mage {
   }
 
   @Override
-  public ElfMage copy() {
-    return new ElfMage(this);
-  }
-
-  @Override
   public String toString() {
     return "Elven mage helps in " + helpType;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
-      return true;
-    }
-    if (!super.equals(obj)) {
-      return false;
-    }
-    if (getClass() != obj.getClass()) {
-      return false;
-    }
-    ElfMage other = (ElfMage) obj;
-    if (helpType == null) {
-      if (other.helpType != null) {
-        return false;
-      }
-    } else if (!helpType.equals(other.helpType)) {
-      return false;
-    }
-    return true;
-  }
 }

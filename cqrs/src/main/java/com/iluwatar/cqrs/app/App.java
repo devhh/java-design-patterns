@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,25 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.cqrs.app;
 
 import com.iluwatar.cqrs.commandes.CommandServiceImpl;
-import com.iluwatar.cqrs.commandes.ICommandService;
 import com.iluwatar.cqrs.constants.AppConstants;
-import com.iluwatar.cqrs.dto.Author;
-import com.iluwatar.cqrs.dto.Book;
-import com.iluwatar.cqrs.queries.IQueryService;
 import com.iluwatar.cqrs.queries.QueryServiceImpl;
 import com.iluwatar.cqrs.util.HibernateUtil;
-import java.math.BigInteger;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * CQRS : Command Query Responsibility Segregation. A pattern used to separate query services from
- * commands or writes services. The pattern is very simple but it has many consequences. For
+ * commands or writes services. The pattern is very simple, but it has many consequences. For
  * example, it can be used to tackle down a complex domain, or to use other architectures that were
  * hard to implement with the classical way.
  *
@@ -47,8 +41,8 @@ import org.slf4j.LoggerFactory;
  * data model to persist(insert,update,delete) objects to a database. And a query side that uses
  * native queries to get data from the database and return objects as DTOs (Data transfer Objects).
  */
+@Slf4j
 public class App {
-  private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
   /**
    * Program entry point.
@@ -56,7 +50,7 @@ public class App {
    * @param args command line args
    */
   public static void main(String[] args) {
-    ICommandService commands = new CommandServiceImpl();
+    var commands = new CommandServiceImpl();
 
     // Create Authors and Books using CommandService
     commands.authorCreated(AppConstants.E_EVANS, "Eric Evans", "evans@email.com");
@@ -72,15 +66,15 @@ public class App {
     commands.bookAddedToAuthor("Domain Specific Languages", 48.89, AppConstants.M_FOWLER);
     commands.authorNameUpdated(AppConstants.E_EVANS, "Eric J. Evans");
 
-    IQueryService queries = new QueryServiceImpl();
+    var queries = new QueryServiceImpl();
 
     // Query the database using QueryService
-    Author nullAuthor = queries.getAuthorByUsername("username");
-    Author evans = queries.getAuthorByUsername(AppConstants.E_EVANS);
-    BigInteger blochBooksCount = queries.getAuthorBooksCount(AppConstants.J_BLOCH);
-    BigInteger authorsCount = queries.getAuthorsCount();
-    Book dddBook = queries.getBook("Domain-Driven Design");
-    List<Book> blochBooks = queries.getAuthorBooks(AppConstants.J_BLOCH);
+    var nullAuthor = queries.getAuthorByUsername("username");
+    var evans = queries.getAuthorByUsername(AppConstants.E_EVANS);
+    var blochBooksCount = queries.getAuthorBooksCount(AppConstants.J_BLOCH);
+    var authorsCount = queries.getAuthorsCount();
+    var dddBook = queries.getBook("Domain-Driven Design");
+    var blochBooks = queries.getAuthorBooks(AppConstants.J_BLOCH);
 
     LOGGER.info("Author username : {}", nullAuthor);
     LOGGER.info("Author evans : {}", evans);

@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.featuretoggle;
 
 import com.iluwatar.featuretoggle.pattern.Service;
@@ -29,8 +30,7 @@ import com.iluwatar.featuretoggle.pattern.tieredversion.TieredFeatureToggleVersi
 import com.iluwatar.featuretoggle.user.User;
 import com.iluwatar.featuretoggle.user.UserGroup;
 import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Feature Toggle pattern allows for complete code executions to be turned on or off with ease.
@@ -39,15 +39,14 @@ import org.slf4j.LoggerFactory;
  * version of the feature toggle, where the enhanced version of the welcome message which is
  * personalised is turned either on or off at instance creation. This method is not as dynamic as
  * the {@link User} driven version where the feature of the personalised welcome message is
- * dependant on the {@link UserGroup} the {@link User} is in. So if the user is a memeber of the
- * {@link UserGroup#isPaid(User)} then they get an ehanced version of the welcome message.
+ * dependent on the {@link UserGroup} the {@link User} is in. So if the user is a member of the
+ * {@link UserGroup#isPaid(User)} then they get an enhanced version of the welcome message.
  *
  * <p>Note that this pattern can easily introduce code complexity, and if not kept in check can
  * result in redundant unmaintained code within the codebase.
  */
+@Slf4j
 public class App {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
   /**
    * Block 1 shows the {@link PropertiesFeatureToggleVersion} being run with {@link Properties}
@@ -72,33 +71,33 @@ public class App {
    */
   public static void main(String[] args) {
 
-    final Properties properties = new Properties();
+    final var properties = new Properties();
     properties.put("enhancedWelcome", true);
-    Service service = new PropertiesFeatureToggleVersion(properties);
-    final String welcomeMessage = service.getWelcomeMessage(new User("Jamie No Code"));
+    var service = new PropertiesFeatureToggleVersion(properties);
+    final var welcomeMessage = service.getWelcomeMessage(new User("Jamie No Code"));
     LOGGER.info(welcomeMessage);
 
     // ---------------------------------------------
 
-    final Properties turnedOff = new Properties();
+    final var turnedOff = new Properties();
     turnedOff.put("enhancedWelcome", false);
-    Service turnedOffService = new PropertiesFeatureToggleVersion(turnedOff);
-    final String welcomeMessageturnedOff =
+    var turnedOffService = new PropertiesFeatureToggleVersion(turnedOff);
+    final var welcomeMessageturnedOff =
         turnedOffService.getWelcomeMessage(new User("Jamie No Code"));
     LOGGER.info(welcomeMessageturnedOff);
 
     // --------------------------------------------
 
-    Service service2 = new TieredFeatureToggleVersion();
+    var service2 = new TieredFeatureToggleVersion();
 
-    final User paidUser = new User("Jamie Coder");
-    final User freeUser = new User("Alan Defect");
+    final var paidUser = new User("Jamie Coder");
+    final var freeUser = new User("Alan Defect");
 
     UserGroup.addUserToPaidGroup(paidUser);
     UserGroup.addUserToFreeGroup(freeUser);
 
-    final String welcomeMessagePaidUser = service2.getWelcomeMessage(paidUser);
-    final String welcomeMessageFreeUser = service2.getWelcomeMessage(freeUser);
+    final var welcomeMessagePaidUser = service2.getWelcomeMessage(paidUser);
+    final var welcomeMessageFreeUser = service2.getWelcomeMessage(freeUser);
     LOGGER.info(welcomeMessageFreeUser);
     LOGGER.info(welcomeMessagePaidUser);
   }

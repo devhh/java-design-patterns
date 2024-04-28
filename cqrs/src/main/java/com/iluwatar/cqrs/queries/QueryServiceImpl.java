@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.cqrs.queries;
 
 import com.iluwatar.cqrs.constants.AppConstants;
@@ -29,65 +30,64 @@ import com.iluwatar.cqrs.dto.Book;
 import com.iluwatar.cqrs.util.HibernateUtil;
 import java.math.BigInteger;
 import java.util.List;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.transform.Transformers;
+import org.hibernate.query.Query;
 
 /**
- * This class is an implementation of {@link IQueryService}. It uses Hibernate native queries to
+ * This class is an implementation of {@link QueryService}. It uses Hibernate native queries to
  * return DTOs from the database.
  */
-public class QueryServiceImpl implements IQueryService {
+public class QueryServiceImpl implements QueryService {
 
-  private SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+  private final SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
 
   @Override
   public Author getAuthorByUsername(String username) {
-    Author authorDTo = null;
-    try (Session session = sessionFactory.openSession()) {
-      SQLQuery sqlQuery = session.createSQLQuery("SELECT a.username as \"username\","
-          + " a.name as \"name\", a.email as \"email\""
-          + "FROM Author a where a.username=:username");
+    Author authorDto;
+    try (var session = sessionFactory.openSession()) {
+      Query<Author> sqlQuery = session.createQuery(
+              "select new com.iluwatar.cqrs.dto.Author(a.name, a.email, a.username)"
+                      + " from com.iluwatar.cqrs.domain.model.Author a where a.username=:username");
       sqlQuery.setParameter(AppConstants.USER_NAME, username);
-      authorDTo = (Author) sqlQuery.setResultTransformer(Transformers.aliasToBean(Author.class))
-          .uniqueResult();
+      authorDto = sqlQuery.uniqueResult();
     }
-    return authorDTo;
+    return authorDto;
   }
 
   @Override
   public Book getBook(String title) {
-    Book bookDTo = null;
-    try (Session session = sessionFactory.openSession()) {
-      SQLQuery sqlQuery = session.createSQLQuery("SELECT b.title as \"title\","
-          + " b.price as \"price\"" + " FROM Book b where b.title=:title");
+    Book bookDto;
+    try (var session = sessionFactory.openSession()) {
+      Query<Book> sqlQuery = session.createQuery(
+              "select new com.iluwatar.cqrs.dto.Book(b.title, b.price)"
+                      + " from com.iluwatar.cqrs.domain.model.Book b where b.title=:title");
       sqlQuery.setParameter("title", title);
-      bookDTo =
-          (Book) sqlQuery.setResultTransformer(Transformers.aliasToBean(Book.class)).uniqueResult();
+      bookDto = sqlQuery.uniqueResult();
     }
-    return bookDTo;
+    return bookDto;
   }
 
   @Override
   public List<Book> getAuthorBooks(String username) {
-    List<Book> bookDTos = null;
-    try (Session session = sessionFactory.openSession()) {
-      SQLQuery sqlQuery = session.createSQLQuery("SELECT b.title as \"title\", b.price as \"price\""
-          + " FROM Author a , Book b where b.author_id = a.id and a.username=:username");
+    List<Book> bookDtos;
+    try (var session = sessionFactory.openSession()) {
+      Query<Book> sqlQuery = session.createQuery(
+              "select new com.iluwatar.cqrs.dto.Book(b.title, b.price)"
+                      + " from com.iluwatar.cqrs.domain.model.Author a, com.iluwatar.cqrs.domain.model.Book b "
+                      + "where b.author.id = a.id and a.username=:username");
       sqlQuery.setParameter(AppConstants.USER_NAME, username);
-      bookDTos = sqlQuery.setResultTransformer(Transformers.aliasToBean(Book.class)).list();
+      bookDtos = sqlQuery.list();
     }
-    return bookDTos;
+    return bookDtos;
   }
 
   @Override
   public BigInteger getAuthorBooksCount(String username) {
-    BigInteger bookcount = null;
-    try (Session session = sessionFactory.openSession()) {
-      SQLQuery sqlQuery = session.createSQLQuery(
-          "SELECT count(b.title)" + " FROM  Book b, Author a"
-              + " where b.author_id = a.id and a.username=:username");
+    BigInteger bookcount;
+    try (var session = sessionFactory.openSession()) {
+      var sqlQuery = session.createNativeQuery(
+              "SELECT count(b.title)" + " FROM  Book b, Author a"
+                      + " where b.author_id = a.id and a.username=:username");
       sqlQuery.setParameter(AppConstants.USER_NAME, username);
       bookcount = (BigInteger) sqlQuery.uniqueResult();
     }
@@ -96,9 +96,9 @@ public class QueryServiceImpl implements IQueryService {
 
   @Override
   public BigInteger getAuthorsCount() {
-    BigInteger authorcount = null;
-    try (Session session = sessionFactory.openSession()) {
-      SQLQuery sqlQuery = session.createSQLQuery("SELECT count(id) from Author");
+    BigInteger authorcount;
+    try (var session = sessionFactory.openSession()) {
+      var sqlQuery = session.createNativeQuery("SELECT count(id) from Author");
       authorcount = (BigInteger) sqlQuery.uniqueResult();
     }
     return authorcount;

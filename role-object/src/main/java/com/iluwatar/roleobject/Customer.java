@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,9 +22,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.roleobject;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -32,6 +34,7 @@ public abstract class Customer {
 
   /**
    * Add specific role @see {@link Role}.
+   *
    * @param role to add
    * @return true if the operation has been successful otherwise false
    */
@@ -39,6 +42,7 @@ public abstract class Customer {
 
   /**
    * Check specific role @see {@link Role}.
+   *
    * @param role to check
    * @return true if the role exists otherwise false
    */
@@ -47,6 +51,7 @@ public abstract class Customer {
 
   /**
    * Remove specific role @see {@link Role}.
+   *
    * @param role to remove
    * @return true if the operation has been successful otherwise false
    */
@@ -54,6 +59,7 @@ public abstract class Customer {
 
   /**
    * Get specific instance associated with this role @see {@link Role}.
+   *
    * @param role         to get
    * @param expectedRole instance class expected to get
    * @return optional with value if the instance exists and corresponds expected class
@@ -67,14 +73,13 @@ public abstract class Customer {
 
   /**
    * Create {@link Customer} with given roles.
+   *
    * @param role roles
    * @return Customer
    */
   public static Customer newCustomer(Role... role) {
-    Customer customer = newCustomer();
-    for (Role r : role) {
-      customer.addRole(r);
-    }
+    var customer = newCustomer();
+    Arrays.stream(role).forEach(customer::addRole);
     return customer;
   }
 

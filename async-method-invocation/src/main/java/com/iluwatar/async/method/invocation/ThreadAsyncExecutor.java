@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.async.method.invocation;
 
 import java.util.Optional;
@@ -80,7 +81,7 @@ public class ThreadAsyncExecutor implements AsyncExecutor {
     static final int COMPLETED = 3;
 
     final Object lock;
-    final Optional<AsyncCallback<T>> callback;
+    final AsyncCallback<T> callback;
 
     volatile int state = RUNNING;
     T value;
@@ -88,7 +89,11 @@ public class ThreadAsyncExecutor implements AsyncExecutor {
 
     CompletableResult(AsyncCallback<T> callback) {
       this.lock = new Object();
-      this.callback = Optional.ofNullable(callback);
+      this.callback = callback;
+    }
+
+    boolean hasCallback() {
+      return callback != null;
     }
 
     /**
@@ -100,7 +105,9 @@ public class ThreadAsyncExecutor implements AsyncExecutor {
     void setValue(T value) {
       this.value = value;
       this.state = COMPLETED;
-      this.callback.ifPresent(ac -> ac.onComplete(value, Optional.<Exception>empty()));
+      if (hasCallback()) {
+        callback.onComplete(value);
+      }
       synchronized (lock) {
         lock.notifyAll();
       }
@@ -115,7 +122,9 @@ public class ThreadAsyncExecutor implements AsyncExecutor {
     void setException(Exception exception) {
       this.exception = exception;
       this.state = FAILED;
-      this.callback.ifPresent(ac -> ac.onComplete(null, Optional.of(exception)));
+      if (hasCallback()) {
+        callback.onError(exception);
+      }
       synchronized (lock) {
         lock.notifyAll();
       }

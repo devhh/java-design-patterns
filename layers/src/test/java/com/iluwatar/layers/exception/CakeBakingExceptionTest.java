@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,32 +25,47 @@
 
 package com.iluwatar.layers.exception;
 
-import com.iluwatar.layers.exception.CakeBakingException;
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/**
- * Date: 12/15/15 - 7:57 PM
- *
- * @author Jeroen Meulemeester
- */
-public class CakeBakingExceptionTest {
+import exception.CakeBakingException;
+import org.junit.jupiter.api.Test;
 
+/**
+ * Tests for the {@link CakeBakingException} class.
+ * This class contains unit tests to verify the correct functionality
+ * of the {@code CakeBakingException} class constructors, including the default constructor
+ * and the constructor that accepts a message parameter.
+ */
+class CakeBakingExceptionTest {
+
+  /**
+   * Tests the default constructor of {@link CakeBakingException}.
+   * Ensures that an exception created with the default constructor has
+   * {@code null} as its message and cause.
+   */
   @Test
-  public void testConstructor() {
-    final CakeBakingException exception = new CakeBakingException();
-    assertNull(exception.getMessage());
-    assertNull(exception.getCause());
+  void testConstructor() {
+    final var exception = new CakeBakingException();
+    assertNull(exception.getMessage(), "The message should be null for the default constructor.");
+    assertNull(exception.getCause(), "The cause should be null for the default constructor.");
   }
 
+  /**
+   * Tests the constructor of {@link CakeBakingException} that accepts a message.
+   * Ensures that an exception created with this constructor correctly stores the provided message
+   * and has {@code null} as its cause.
+   *
+   * @param expectedMessage The message provided to the constructor.
+   */
   @Test
-  public void testConstructorWithMessage() {
-    final String expectedMessage = "message";
-    final CakeBakingException exception = new CakeBakingException(expectedMessage);
-    assertEquals(expectedMessage, exception.getMessage());
-    assertNull(exception.getCause());
+  void testConstructorWithMessage() {
+    final var expectedMessage = "message";
+    final var exception = new CakeBakingException(expectedMessage);
+    assertEquals(expectedMessage, exception.getMessage(),
+        "The stored message should match the expected message.");
+    assertNull(exception.getCause(),
+        "The cause should be null when an exception is created with only a message.");
   }
 
 }

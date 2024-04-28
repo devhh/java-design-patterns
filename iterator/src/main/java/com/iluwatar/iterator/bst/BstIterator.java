@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.iterator.bst;
 
 import com.iluwatar.iterator.Iterator;
@@ -36,7 +37,7 @@ import java.util.NoSuchElementException;
  */
 public class BstIterator<T extends Comparable<T>> implements Iterator<TreeNode<T>> {
 
-  private ArrayDeque<TreeNode<T>> pathStack;
+  private final ArrayDeque<TreeNode<T>> pathStack;
 
   public BstIterator(TreeNode<T> root) {
     pathStack = new ArrayDeque<>();
@@ -78,7 +79,7 @@ public class BstIterator<T extends Comparable<T>> implements Iterator<TreeNode<T
     if (pathStack.isEmpty()) {
       throw new NoSuchElementException();
     }
-    TreeNode<T> next = pathStack.pop();
+    var next = pathStack.pop();
     pushPathToNextSmallest(next.getRight());
     return next;
   }

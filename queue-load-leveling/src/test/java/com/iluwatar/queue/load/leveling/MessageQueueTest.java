@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,28 +22,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.queue.load.leveling;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.junit.jupiter.api.Test;
+
 /**
- * 
  * Test case for submitting and retrieving messages from Blocking Queue.
- * 
  */
-public class MessageQueueTest {
+class MessageQueueTest {
 
   @Test
-  public void messageQueueTest() {
-    
-    MessageQueue msgQueue = new MessageQueue();
-    
+  void messageQueueTest() {
+
+    var msgQueue = new MessageQueue();
+
     // submit message
     msgQueue.submitMsg(new Message("MessageQueue Test"));
-    
+
     // retrieve message
     assertEquals("MessageQueue Test", msgQueue.retrieveMsg().getMsg());
   }

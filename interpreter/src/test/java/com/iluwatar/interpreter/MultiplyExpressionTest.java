@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,19 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.interpreter;
 
-import org.junit.jupiter.params.provider.Arguments;
-
 import java.util.stream.Stream;
+import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Date: 12/14/15 - 12:08 PM
  *
  * @author Jeroen Meulemeester
  */
-public class MultiplyExpressionTest extends ExpressionTest<MultiplyExpression> {
+class MultiplyExpressionTest extends ExpressionTest<MultiplyExpression> {
 
   /**
    * Create a new set of test entries with the expected result
@@ -46,7 +46,6 @@ public class MultiplyExpressionTest extends ExpressionTest<MultiplyExpression> {
 
   /**
    * Create a new test instance using the given test parameters and expected result
-   *
    */
   public MultiplyExpressionTest() {
     super("*", MultiplyExpression::new);

@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.reader.writer.lock;
 
 import java.util.HashSet;
@@ -29,8 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Class responsible for control the access for reader or writer
@@ -38,12 +38,11 @@ import org.slf4j.LoggerFactory;
  * <p>Allows multiple readers to hold the lock at same time, but if any writer holds the lock then
  * readers wait. If reader holds the lock then writer waits. This lock is not fair.
  */
+@Slf4j
 public class ReaderWriterLock implements ReadWriteLock {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ReaderWriterLock.class);
 
-
-  private Object readerMutex = new Object();
+  private final Object readerMutex = new Object();
 
   private int currentReaderCount;
 
@@ -57,10 +56,10 @@ public class ReaderWriterLock implements ReadWriteLock {
    *
    * <p>This is the most important field in this class to control the access for reader/writer.
    */
-  private Set<Object> globalMutex = new HashSet<>();
+  private final Set<Object> globalMutex = new HashSet<>();
 
-  private ReadLock readerLock = new ReadLock();
-  private WriteLock writerLock = new WriteLock();
+  private final ReadLock readerLock = new ReadLock();
+  private final WriteLock writerLock = new WriteLock();
 
   @Override
   public Lock readLock() {
@@ -114,8 +113,8 @@ public class ReaderWriterLock implements ReadWriteLock {
           try {
             globalMutex.wait();
           } catch (InterruptedException e) {
-            LOGGER
-                .info("InterruptedException while waiting for globalMutex in acquireForReaders", e);
+            var message = "InterruptedException while waiting for globalMutex in acquireForReaders";
+            LOGGER.info(message, e);
             Thread.currentThread().interrupt();
           }
         }
@@ -125,7 +124,6 @@ public class ReaderWriterLock implements ReadWriteLock {
 
     @Override
     public void unlock() {
-
       synchronized (readerMutex) {
         currentReaderCount--;
         // Release the lock only when it is the last reader, it is ensure that the lock is released
@@ -142,7 +140,7 @@ public class ReaderWriterLock implements ReadWriteLock {
     }
 
     @Override
-    public void lockInterruptibly() throws InterruptedException {
+    public void lockInterruptibly() {
       throw new UnsupportedOperationException();
     }
 
@@ -152,7 +150,7 @@ public class ReaderWriterLock implements ReadWriteLock {
     }
 
     @Override
-    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+    public boolean tryLock(long time, TimeUnit unit) {
       throw new UnsupportedOperationException();
     }
 
@@ -170,7 +168,6 @@ public class ReaderWriterLock implements ReadWriteLock {
 
     @Override
     public void lock() {
-
       synchronized (globalMutex) {
 
         // Wait until the lock is free.
@@ -189,7 +186,6 @@ public class ReaderWriterLock implements ReadWriteLock {
 
     @Override
     public void unlock() {
-
       synchronized (globalMutex) {
         globalMutex.remove(this);
         // Notify the waiter, other writer or reader
@@ -198,7 +194,7 @@ public class ReaderWriterLock implements ReadWriteLock {
     }
 
     @Override
-    public void lockInterruptibly() throws InterruptedException {
+    public void lockInterruptibly() {
       throw new UnsupportedOperationException();
     }
 
@@ -208,7 +204,7 @@ public class ReaderWriterLock implements ReadWriteLock {
     }
 
     @Override
-    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+    public boolean tryLock(long time, TimeUnit unit) {
       throw new UnsupportedOperationException();
     }
 

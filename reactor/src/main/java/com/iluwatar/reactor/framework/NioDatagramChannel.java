@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.reactor.framework;
 
 import java.io.IOException;
@@ -30,15 +31,13 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * A wrapper over {@link DatagramChannel} which can read and write data on a DatagramChannel.
  */
+@Slf4j
 public class NioDatagramChannel extends AbstractNioChannel {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(NioDatagramChannel.class);
 
   private final int port;
 
@@ -73,15 +72,15 @@ public class NioDatagramChannel extends AbstractNioChannel {
    */
   @Override
   public DatagramPacket read(SelectionKey key) throws IOException {
-    ByteBuffer buffer = ByteBuffer.allocate(1024);
-    SocketAddress sender = ((DatagramChannel) key.channel()).receive(buffer);
+    var buffer = ByteBuffer.allocate(1024);
+    var sender = ((DatagramChannel) key.channel()).receive(buffer);
 
     /*
      * It is required to create a DatagramPacket because we need to preserve which socket address
      * acts as destination for sending reply packets.
      */
     buffer.flip();
-    DatagramPacket packet = new DatagramPacket(buffer);
+    var packet = new DatagramPacket(buffer);
     packet.setSender(sender);
 
     return packet;
@@ -115,7 +114,7 @@ public class NioDatagramChannel extends AbstractNioChannel {
    */
   @Override
   protected void doWrite(Object pendingWrite, SelectionKey key) throws IOException {
-    DatagramPacket pendingPacket = (DatagramPacket) pendingWrite;
+    var pendingPacket = (DatagramPacket) pendingWrite;
     getJavaChannel().send(pendingPacket.getData(), pendingPacket.getReceiver());
   }
 
@@ -134,7 +133,7 @@ public class NioDatagramChannel extends AbstractNioChannel {
    */
   public static class DatagramPacket {
     private SocketAddress sender;
-    private ByteBuffer data;
+    private final ByteBuffer data;
     private SocketAddress receiver;
 
     /**

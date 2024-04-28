@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,18 +22,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.producer.consumer;
 
-import java.util.Random;
+import java.security.SecureRandom;
 
 /**
  * Class responsible for producing unit of work that can be expressed as {@link Item} and submitted
  * to queue.
  */
 public class Producer {
-  
-  private static final Random RANDOM = new Random();
+
+  private static final SecureRandom RANDOM = new SecureRandom();
 
   private final ItemQueue queue;
 
@@ -49,7 +50,7 @@ public class Producer {
    */
   public void produce() throws InterruptedException {
 
-    Item item = new Item(name, itemId++);
+    var item = new Item(name, itemId++);
     queue.put(item);
     Thread.sleep(RANDOM.nextInt(2000));
   }

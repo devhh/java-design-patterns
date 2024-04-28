@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +22,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.halfsynchalfasync;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This application demonstrates Half-Sync/Half-Async pattern. Key parts of the pattern are {@link
  * AsyncTask} and {@link AsynchronousService}.
  *
  * <p><i>PROBLEM</i> <br>
- * A concurrent system have a mixture of short duration, mid duration and long duration tasks. Mid
+ * A concurrent system have a mixture of short duration, mid-duration and long duration tasks. Mid
  * or long duration tasks should be performed asynchronously to meet quality of service
  * requirements.
  *
  * <p><i>INTENT</i> <br>
- * The intent of this pattern is to separate the the synchronous and asynchronous processing in the
+ * The intent of this pattern is to separate the synchronous and asynchronous processing in the
  * concurrent application by introducing two intercommunicating layers - one for sync and one for
  * async. This simplifies the programming without unduly affecting the performance.
  *
@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * associated with each socket that is connected to the client. Thread blocks waiting for CORBA
  * requests from the client. On receiving request it is inserted in the queuing layer which is then
  * picked up by synchronous layer which processes the request and sends response back to the
- * client.<br> Android AsyncTask framework - Framework provides a way to execute long running
+ * client.<br> Android AsyncTask framework - Framework provides a way to execute long-running
  * blocking calls, such as downloading a file, in background threads so that the UI thread remains
  * free to respond to user inputs.<br>
  *
@@ -60,9 +60,8 @@ import org.slf4j.LoggerFactory;
  * tasks are executed. Our implementation is just one simple way of implementing this pattern, there
  * are many variants possible as described in its applications.
  */
+@Slf4j
 public class App {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
   /**
    * Program entry point.
@@ -70,7 +69,7 @@ public class App {
    * @param args command line args
    */
   public static void main(String[] args) {
-    AsynchronousService service = new AsynchronousService(new LinkedBlockingQueue<>());
+    var service = new AsynchronousService(new LinkedBlockingQueue<>());
     /*
      * A new task to calculate sum is received but as this is main thread, it should not block. So
      * it passes it to the asynchronous task layer to compute and proceeds with handling other
@@ -95,25 +94,25 @@ public class App {
    * ArithmeticSumTask.
    */
   static class ArithmeticSumTask implements AsyncTask<Long> {
-    private long numberOfElements;
+    private final long numberOfElements;
 
     public ArithmeticSumTask(long numberOfElements) {
       this.numberOfElements = numberOfElements;
     }
 
     /*
-     * This is the long running task that is performed in background. In our example the long
-     * running task is calculating arithmetic sum with artificial delay.
+     * This is the long-running task that is performed in background. In our example the long-running
+     * task is calculating arithmetic sum with artificial delay.
      */
     @Override
-    public Long call() throws Exception {
+    public Long call() {
       return ap(numberOfElements);
     }
 
     /*
      * This will be called in context of the main thread where some validations can be done
      * regarding the inputs. Such as it must be greater than 0. It's a small computation which can
-     * be performed in main thread. If we did validated the input in background thread then we pay
+     * be performed in main thread. If we did validate the input in background thread then we pay
      * the cost of context switching which is much more than validating it in main thread.
      */
     @Override

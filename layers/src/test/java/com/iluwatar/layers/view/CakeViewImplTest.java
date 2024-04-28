@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,63 +25,60 @@
 
 package com.iluwatar.layers.view;
 
-import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.AppenderBase;
-import com.iluwatar.layers.dto.CakeInfo;
-import com.iluwatar.layers.dto.CakeLayerInfo;
-import com.iluwatar.layers.dto.CakeToppingInfo;
-import com.iluwatar.layers.service.CakeBakingService;
-import com.iluwatar.layers.view.CakeViewImpl;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.slf4j.LoggerFactory;
-
-import java.util.LinkedList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.AppenderBase;
+import dto.CakeInfo;
+import dto.CakeLayerInfo;
+import dto.CakeToppingInfo;
+import java.util.LinkedList;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
+import service.CakeBakingService;
+import view.CakeViewImpl;
+
 /**
- * Date: 12/15/15 - 10:04 PM
- *
- * @author Jeroen Meulemeester
+ * This class contains unit tests for the CakeViewImpl class.
+ * It tests the functionality of rendering cakes using the CakeViewImpl class.
+ * It also tests the logging functionality of the CakeViewImpl class.
  */
-public class CakeViewImplTest {
+class CakeViewImplTest {
 
   private InMemoryAppender appender;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     appender = new InMemoryAppender(CakeViewImpl.class);
   }
 
   @AfterEach
-  public void tearDown() {
+  void tearDown() {
     appender.stop();
   }
 
   /**
-   * Verify if the cake view renders the expected result
+   * Verify if the cake view renders the expected result.
    */
   @Test
-  public void testRender() {
+  void testRender() {
 
-    final List<CakeLayerInfo> layers = List.of(
-            new CakeLayerInfo("layer1", 1000),
-            new CakeLayerInfo("layer2", 2000),
-            new CakeLayerInfo("layer3", 3000));
+    final var layers = List.of(new CakeLayerInfo("layer1", 1000), new CakeLayerInfo("layer2", 2000),
+        new CakeLayerInfo("layer3", 3000));
 
-    final CakeInfo cake = new CakeInfo(new CakeToppingInfo("topping", 1000), layers);
-    final List<CakeInfo> cakes = List.of(cake);
+    final var cake = new CakeInfo(new CakeToppingInfo("topping", 1000), layers);
+    final var cakes = List.of(cake);
 
-    final CakeBakingService bakingService = mock(CakeBakingService.class);
+    final var bakingService = mock(CakeBakingService.class);
     when(bakingService.getAllCakes()).thenReturn(cakes);
 
-    final CakeViewImpl cakeView = new CakeViewImpl(bakingService);
+    final var cakeView = new CakeViewImpl(bakingService);
 
     assertEquals(0, appender.getLogSize());
 
@@ -90,7 +89,7 @@ public class CakeViewImplTest {
 
   private class InMemoryAppender extends AppenderBase<ILoggingEvent> {
 
-    private List<ILoggingEvent> log = new LinkedList<>();
+    private final List<ILoggingEvent> log = new LinkedList<>();
 
     public InMemoryAppender(Class clazz) {
       ((Logger) LoggerFactory.getLogger(clazz)).addAppender(this);

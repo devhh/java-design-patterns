@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.async.method.invocation;
-
-import java.util.Optional;
 
 /**
  * AsyncCallback interface.
@@ -33,10 +32,16 @@ import java.util.Optional;
 public interface AsyncCallback<T> {
 
   /**
-   * Complete handler which is executed when async task is completed or fails execution.
+   * Complete handler which is executed when async task is completed.
    *
-   * @param value the evaluated value from async task, undefined when execution fails
-   * @param ex    empty value if execution succeeds, some exception if executions fails
+   * @param value the evaluated value from async task
    */
-  void onComplete(T value, Optional<Exception> ex);
+  void onComplete(T value);
+
+  /**
+   * Error handler which is executed when async task fails execution.
+   *
+   * @param ex exception which was thrown during async task execution(non-null)
+   */
+  void onError(Exception ex);
 }

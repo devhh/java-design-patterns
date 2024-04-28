@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,20 +22,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.balking;
 
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Washing machine class.
  */
+@Slf4j
 public class WashingMachine {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(WashingMachine.class);
   private final DelayProvider delayProvider;
+
+  @Getter
   private WashingMachineState washingMachineState;
 
   /**
@@ -44,7 +47,8 @@ public class WashingMachine {
       try {
         Thread.sleep(timeUnit.toMillis(interval));
       } catch (InterruptedException ie) {
-        ie.printStackTrace();
+        LOGGER.error("", ie);
+        Thread.currentThread().interrupt();
       }
       task.run();
     });
@@ -59,10 +63,6 @@ public class WashingMachine {
     this.washingMachineState = WashingMachineState.ENABLED;
   }
 
-  public WashingMachineState getWashingMachineState() {
-    return washingMachineState;
-  }
-
   /**
    * Method responsible for washing if the object is in appropriate state.
    */
@@ -71,7 +71,7 @@ public class WashingMachine {
       var machineState = getWashingMachineState();
       LOGGER.info("{}: Actual machine state: {}", Thread.currentThread().getName(), machineState);
       if (this.washingMachineState == WashingMachineState.WASHING) {
-        LOGGER.error("ERROR: Cannot wash if the machine has been already washing!");
+        LOGGER.error("Cannot wash if the machine has been already washing!");
         return;
       }
       this.washingMachineState = WashingMachineState.WASHING;
@@ -82,7 +82,7 @@ public class WashingMachine {
   }
 
   /**
-   * Method responsible of ending the washing by changing machine state.
+   * Method is responsible for ending the washing by changing machine state.
    */
   public synchronized void endOfWashing() {
     washingMachineState = WashingMachineState.ENABLED;

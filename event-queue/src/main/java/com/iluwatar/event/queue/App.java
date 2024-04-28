@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.event.queue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Event or message queues provide an asynchronous communications protocol, meaning that the sender
@@ -40,9 +40,8 @@ import org.slf4j.LoggerFactory;
  * enqueues the request and returns. The request processor then processes items from the queue at a
  * later time.
  */
+@Slf4j
 public class App {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
   /**
    * Program entry point.
@@ -53,12 +52,12 @@ public class App {
    */
   public static void main(String[] args) throws UnsupportedAudioFileException, IOException,
       InterruptedException {
-    Audio audio = Audio.getInstance();
+    var audio = Audio.getInstance();
     audio.playSound(audio.getAudioStream("./etc/Bass-Drum-1.wav"), -10.0f);
     audio.playSound(audio.getAudioStream("./etc/Closed-Hi-Hat-1.wav"), -8.0f);
 
     LOGGER.info("Press Enter key to stop the program...");
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+    try (var br = new BufferedReader(new InputStreamReader(System.in))) {
       br.read();
     }
     audio.stopService();

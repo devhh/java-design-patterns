@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.monad;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class Validator<T> {
    * @param message    error message when object is invalid
    * @return this
    */
-  public Validator<T> validate(Predicate<T> validation, String message) {
+  public Validator<T> validate(Predicate<? super T> validation, String message) {
     if (!validation.test(obj)) {
       exceptions.add(new IllegalStateException(message));
     }
@@ -85,18 +86,21 @@ public class Validator<T> {
   }
 
   /**
-   * Extension for the {@link Validator#validate(Function, Predicate, String)} method, dedicated for
-   * objects, that need to be projected before requested validation.
+   * Extension for the {@link Validator#validate(Predicate, String)} method, dedicated for objects,
+   * that need to be projected before requested validation.
    *
    * @param projection function that gets an objects, and returns projection representing element to
    *                   be validated.
-   * @param validation see {@link Validator#validate(Function, Predicate, String)}
-   * @param message    see {@link Validator#validate(Function, Predicate, String)}
-   * @param <U>        see {@link Validator#validate(Function, Predicate, String)}
+   * @param validation see {@link Validator#validate(Predicate, String)}
+   * @param message    see {@link Validator#validate(Predicate, String)}
+   * @param <U>        see {@link Validator#validate(Predicate, String)}
    * @return this
    */
-  public <U> Validator<T> validate(Function<T, U> projection, Predicate<U> validation,
-                                   String message) {
+  public <U> Validator<T> validate(
+      Function<? super T, ? extends U> projection,
+      Predicate<? super U> validation,
+      String message
+  ) {
     return validate(projection.andThen(validation::test)::apply, message);
   }
 
@@ -110,7 +114,7 @@ public class Validator<T> {
     if (exceptions.isEmpty()) {
       return obj;
     }
-    IllegalStateException e = new IllegalStateException();
+    var e = new IllegalStateException();
     exceptions.forEach(e::addSuppressed);
     throw e;
   }

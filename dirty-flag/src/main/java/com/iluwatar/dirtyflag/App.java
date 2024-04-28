@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.dirtyflag;
 
-import java.util.List;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This application demonstrates the <b>Dirty Flag</b> pattern. The dirty flag behavioral pattern
@@ -53,26 +51,22 @@ import org.slf4j.LoggerFactory;
  * re-fetches from <i>world.txt</i> when needed. {@link World} mainly serves the data to the
  * front-end.
  */
+@Slf4j
 public class App {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
   /**
    * Program execution point.
    */
   public void run() {
-
-    final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    final var executorService = Executors.newSingleThreadScheduledExecutor();
     executorService.scheduleAtFixedRate(new Runnable() {
       final World world = new World();
 
       @Override
       public void run() {
-        List<String> countries = world.fetch();
+        var countries = world.fetch();
         LOGGER.info("Our world currently has the following countries:-");
-        for (String country : countries) {
-          LOGGER.info("\t" + country);
-        }
+        countries.stream().map(country -> "\t" + country).forEach(LOGGER::info);
       }
     }, 0, 15, TimeUnit.SECONDS); // Run at every 15 seconds.
   }
@@ -83,8 +77,7 @@ public class App {
    * @param args command line args
    */
   public static void main(String[] args) {
-    App app = new App();
-
+    var app = new App();
     app.run();
   }
 

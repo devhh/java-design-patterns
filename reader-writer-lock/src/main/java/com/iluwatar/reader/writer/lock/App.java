@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,16 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.reader.writer.lock;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * In a multiple thread applications, the threads may try to synchronize the shared resources
@@ -47,9 +45,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author hongshuwei@gmail.com
  */
+@Slf4j
 public class App {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
   /**
    * Program entry point.
@@ -58,19 +55,21 @@ public class App {
    */
   public static void main(String[] args) {
 
-    ExecutorService executeService = Executors.newFixedThreadPool(10);
-    ReaderWriterLock lock = new ReaderWriterLock();
+    var executeService = Executors.newFixedThreadPool(10);
+    var lock = new ReaderWriterLock();
 
     // Start writers
-    IntStream.range(0, 5)
-        .forEach(i -> executeService.submit(new Writer("Writer " + i, lock.writeLock(),
-            ThreadLocalRandom.current().nextLong(5000))));
+    for (var i = 0; i < 5; i++) {
+      var writingTime = ThreadLocalRandom.current().nextLong(5000);
+      executeService.submit(new Writer("Writer " + i, lock.writeLock(), writingTime));
+    }
     LOGGER.info("Writers added...");
 
     // Start readers
-    IntStream.range(0, 5)
-        .forEach(i -> executeService.submit(new Reader("Reader " + i, lock.readLock(),
-            ThreadLocalRandom.current().nextLong(10))));
+    for (var i = 0; i < 5; i++) {
+      var readingTime = ThreadLocalRandom.current().nextLong(10);
+      executeService.submit(new Reader("Reader " + i, lock.readLock(), readingTime));
+    }
     LOGGER.info("Readers added...");
 
     try {
@@ -81,9 +80,10 @@ public class App {
     }
 
     // Start readers
-    IntStream.range(6, 10)
-        .forEach(i -> executeService.submit(new Reader("Reader " + i, lock.readLock(),
-            ThreadLocalRandom.current().nextLong(10))));
+    for (var i = 6; i < 10; i++) {
+      var readingTime = ThreadLocalRandom.current().nextLong(10);
+      executeService.submit(new Reader("Reader " + i, lock.readLock(), readingTime));
+    }
     LOGGER.info("More readers added...");
 
 

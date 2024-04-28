@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.hexagonal.database;
 
 import com.iluwatar.hexagonal.domain.LotteryNumbers;
@@ -32,11 +33,9 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.bson.Document;
 
@@ -48,6 +47,7 @@ public class MongoTicketRepository implements LotteryTicketRepository {
   private static final String DEFAULT_DB = "lotteryDB";
   private static final String DEFAULT_TICKETS_COLLECTION = "lotteryTickets";
   private static final String DEFAULT_COUNTERS_COLLECTION = "counters";
+  private static final String TICKET_ID = "ticketId";
 
   private MongoClient mongoClient;
   private MongoDatabase database;
@@ -89,13 +89,13 @@ public class MongoTicketRepository implements LotteryTicketRepository {
     database = mongoClient.getDatabase(dbName);
     ticketsCollection = database.getCollection(ticketsCollectionName);
     countersCollection = database.getCollection(countersCollectionName);
-    if (countersCollection.count() <= 0) {
+    if (countersCollection.countDocuments() <= 0) {
       initCounters();
     }
   }
 
   private void initCounters() {
-    Document doc = new Document("_id", "ticketId").append("seq", 1);
+    var doc = new Document("_id", TICKET_ID).append("seq", 1);
     countersCollection.insertOne(doc);
   }
 
@@ -105,10 +105,10 @@ public class MongoTicketRepository implements LotteryTicketRepository {
    * @return next ticket id
    */
   public int getNextId() {
-    Document find = new Document("_id", "ticketId");
-    Document increase = new Document("seq", 1);
-    Document update = new Document("$inc", increase);
-    Document result = countersCollection.findOneAndUpdate(find, update);
+    var find = new Document("_id", TICKET_ID);
+    var increase = new Document("seq", 1);
+    var update = new Document("$inc", increase);
+    var result = countersCollection.findOneAndUpdate(find, update);
     return result.getInteger("seq");
   }
 
@@ -132,37 +132,35 @@ public class MongoTicketRepository implements LotteryTicketRepository {
 
   @Override
   public Optional<LotteryTicket> findById(LotteryTicketId id) {
-    Document find = new Document("ticketId", id.getId());
-    List<Document> results = ticketsCollection.find(find).limit(1).into(new ArrayList<>());
-    if (results.size() > 0) {
-      LotteryTicket lotteryTicket = docToTicket(results.get(0));
-      return Optional.of(lotteryTicket);
-    } else {
-      return Optional.empty();
-    }
+    return ticketsCollection
+        .find(new Document(TICKET_ID, id.getId()))
+        .limit(1)
+        .into(new ArrayList<>())
+        .stream()
+        .findFirst()
+        .map(this::docToTicket);
   }
 
   @Override
   public Optional<LotteryTicketId> save(LotteryTicket ticket) {
-    int ticketId = getNextId();
-    Document doc = new Document("ticketId", ticketId);
+    var ticketId = getNextId();
+    var doc = new Document(TICKET_ID, ticketId);
     doc.put("email", ticket.getPlayerDetails().getEmail());
     doc.put("bank", ticket.getPlayerDetails().getBankAccount());
     doc.put("phone", ticket.getPlayerDetails().getPhoneNumber());
-    doc.put("numbers", ticket.getNumbers().getNumbersAsString());
+    doc.put("numbers", ticket.getLotteryNumbers().getNumbersAsString());
     ticketsCollection.insertOne(doc);
     return Optional.of(new LotteryTicketId(ticketId));
   }
 
   @Override
   public Map<LotteryTicketId, LotteryTicket> findAll() {
-    Map<LotteryTicketId, LotteryTicket> map = new HashMap<>();
-    List<Document> docs = ticketsCollection.find(new Document()).into(new ArrayList<>());
-    for (Document doc : docs) {
-      LotteryTicket lotteryTicket = docToTicket(doc);
-      map.put(lotteryTicket.getId(), lotteryTicket);
-    }
-    return map;
+    return ticketsCollection
+        .find(new Document())
+        .into(new ArrayList<>())
+        .stream()
+        .map(this::docToTicket)
+        .collect(Collectors.toMap(LotteryTicket::getId, Function.identity()));
   }
 
   @Override
@@ -171,13 +169,13 @@ public class MongoTicketRepository implements LotteryTicketRepository {
   }
 
   private LotteryTicket docToTicket(Document doc) {
-    PlayerDetails playerDetails = new PlayerDetails(doc.getString("email"), doc.getString("bank"),
+    var playerDetails = new PlayerDetails(doc.getString("email"), doc.getString("bank"),
         doc.getString("phone"));
-    Set<Integer> numbers = Arrays.stream(doc.getString("numbers").split(","))
+    var numbers = Arrays.stream(doc.getString("numbers").split(","))
         .map(Integer::parseInt)
         .collect(Collectors.toSet());
-    LotteryNumbers lotteryNumbers = LotteryNumbers.create(numbers);
-    return new LotteryTicket(new LotteryTicketId(doc
-        .getInteger("ticketId")), playerDetails, lotteryNumbers);
+    var lotteryNumbers = LotteryNumbers.create(numbers);
+    var ticketId = new LotteryTicketId(doc.getInteger(TICKET_ID));
+    return new LotteryTicket(ticketId, playerDetails, lotteryNumbers);
   }
 }

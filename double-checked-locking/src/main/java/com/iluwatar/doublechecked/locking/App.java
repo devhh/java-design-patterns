@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,14 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.doublechecked.locking;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.stream.IntStream;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Double Checked Locking is a concurrency design pattern used to reduce the overhead of acquiring a
@@ -40,9 +40,8 @@ import org.slf4j.LoggerFactory;
  * locking to add item to inventory. In this method, the thread which gets the lock first adds the
  * item.
  */
+@Slf4j
 public class App {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(App.class);
 
   /**
    * Program entry point.
@@ -50,21 +49,20 @@ public class App {
    * @param args command line args
    */
   public static void main(String[] args) {
-    final Inventory inventory = new Inventory(1000);
-    ExecutorService executorService = Executors.newFixedThreadPool(3);
-    for (int i = 0; i < 3; i++) {
-      executorService.execute(() -> {
-        while (inventory.addItem(new Item())) {
-          LOGGER.info("Adding another item");
-        }
-      });
-    }
+    final var inventory = new Inventory(1000);
+    var executorService = Executors.newFixedThreadPool(3);
+    IntStream.range(0, 3).<Runnable>mapToObj(i -> () -> {
+      while (inventory.addItem(new Item())) {
+        LOGGER.info("Adding another item");
+      }
+    }).forEach(executorService::execute);
 
     executorService.shutdown();
     try {
       executorService.awaitTermination(5, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
       LOGGER.error("Error waiting for ExecutorService shutdown");
+      Thread.currentThread().interrupt();
     }
   }
 }

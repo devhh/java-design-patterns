@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.specification.selector;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -32,20 +33,20 @@ import com.iluwatar.specification.creature.Creature;
 import com.iluwatar.specification.property.Mass;
 import org.junit.jupiter.api.Test;
 
-public class MassSelectorTest {
+class MassSelectorTest {
 
   /**
    * Verify if the mass selector gives the correct results.
    */
   @Test
-  public void testMass() {
-    final Creature lightCreature = mock(Creature.class);
+  void testMass() {
+    final var lightCreature = mock(Creature.class);
     when(lightCreature.getMass()).thenReturn(new Mass(50.0));
 
-    final Creature heavyCreature = mock(Creature.class);
+    final var heavyCreature = mock(Creature.class);
     when(heavyCreature.getMass()).thenReturn(new Mass(2500.0));
 
-    final MassSmallerThanOrEqSelector lightSelector = new MassSmallerThanOrEqSelector(500.0);
+    final var lightSelector = new MassSmallerThanOrEqSelector(500.0);
     assertTrue(lightSelector.test(lightCreature));
     assertFalse(lightSelector.test(heavyCreature));
   }

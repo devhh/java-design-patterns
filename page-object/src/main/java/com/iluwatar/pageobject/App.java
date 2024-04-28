@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.pageobject;
 
 import java.awt.Desktop;
@@ -67,8 +68,8 @@ public final class App {
   public static void main(String[] args) {
 
     try {
-      File applicationFile =
-          new File(App.class.getClassLoader().getResource("sample-ui/login.html").getPath());
+      var classLoader = App.class.getClassLoader();
+      var applicationFile = new File(classLoader.getResource("sample-ui/login.html").getPath());
 
       // Should work for unix like OS (mac, unix etc...)
       if (Desktop.isDesktopSupported()) {

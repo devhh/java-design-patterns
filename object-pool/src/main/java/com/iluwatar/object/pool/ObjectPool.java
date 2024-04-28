@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.object.pool;
 
 import java.util.HashSet;
@@ -33,8 +34,8 @@ import java.util.Set;
  */
 public abstract class ObjectPool<T> {
 
-  private Set<T> available = new HashSet<>();
-  private Set<T> inUse = new HashSet<>();
+  private final Set<T> available = new HashSet<>();
+  private final Set<T> inUse = new HashSet<>();
 
   protected abstract T create();
 
@@ -45,7 +46,7 @@ public abstract class ObjectPool<T> {
     if (available.isEmpty()) {
       available.add(create());
     }
-    T instance = available.iterator().next();
+    var instance = available.iterator().next();
     available.remove(instance);
     inUse.add(instance);
     return instance;

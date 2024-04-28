@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.front.controller;
 
 /**
@@ -30,26 +31,24 @@ package com.iluwatar.front.controller;
 public class FrontController {
 
   public void handleRequest(String request) {
-    Command command = getCommand(request);
+    var command = getCommand(request);
     command.process();
   }
 
   private Command getCommand(String request) {
-    Class<?> commandClass = getCommandClass(request);
+    var commandClass = getCommandClass(request);
     try {
-      return (Command) commandClass.newInstance();
+      return (Command) commandClass.getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       throw new ApplicationException(e);
     }
   }
 
   private static Class<?> getCommandClass(String request) {
-    Class<?> result;
     try {
-      result = Class.forName("com.iluwatar.front.controller." + request + "Command");
+      return Class.forName("com.iluwatar.front.controller." + request + "Command");
     } catch (ClassNotFoundException e) {
-      result = UnknownCommand.class;
+      return UnknownCommand.class;
     }
-    return result;
   }
 }

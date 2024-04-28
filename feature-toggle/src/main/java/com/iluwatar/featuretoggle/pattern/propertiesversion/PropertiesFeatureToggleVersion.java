@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +22,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.featuretoggle.pattern.propertiesversion;
 
 import com.iluwatar.featuretoggle.pattern.Service;
 import com.iluwatar.featuretoggle.user.User;
 import java.util.Properties;
+import lombok.Getter;
 
 /**
- * This example of the Feature Toogle pattern is less dynamic version than {@link
+ * This example of the Feature Toggle pattern is less dynamic version than {@link
  * com.iluwatar.featuretoggle.pattern.tieredversion.TieredFeatureToggleVersion} where the feature is
  * turned on or off at the time of creation of the service. This example uses simple Java {@link
  * Properties} however it could as easily be done with an external configuration file loaded by
@@ -40,9 +42,15 @@ import java.util.Properties;
  * @see com.iluwatar.featuretoggle.pattern.tieredversion.TieredFeatureToggleVersion
  * @see User
  */
+@Getter
 public class PropertiesFeatureToggleVersion implements Service {
 
-  private boolean isEnhanced;
+  /**
+   * True if the welcome message to be returned is the enhanced venison or not. For
+   * this service it will see the value of the boolean that was set in the constructor {@link
+   * PropertiesFeatureToggleVersion#PropertiesFeatureToggleVersion(Properties)}
+   */
+  private final boolean enhanced;
 
   /**
    * Creates an instance of {@link PropertiesFeatureToggleVersion} using the passed {@link
@@ -59,7 +67,7 @@ public class PropertiesFeatureToggleVersion implements Service {
       throw new IllegalArgumentException("No Properties Provided.");
     } else {
       try {
-        isEnhanced = (boolean) properties.get("enhancedWelcome");
+        enhanced = (boolean) properties.get("enhancedWelcome");
       } catch (Exception e) {
         throw new IllegalArgumentException("Invalid Enhancement Settings Provided.");
       }
@@ -69,12 +77,12 @@ public class PropertiesFeatureToggleVersion implements Service {
   /**
    * Generate a welcome message based on the user being passed and the status of the feature toggle.
    * If the enhanced version is enabled, then the message will be personalised with the name of the
-   * passed {@link User}. However if disabled then a generic version fo the message is returned.
+   * passed {@link User}. However, if disabled then a generic version fo the message is returned.
    *
    * @param user the {@link User} to be displayed in the message if the enhanced version is enabled
    *             see {@link PropertiesFeatureToggleVersion#isEnhanced()}. If the enhanced version is
    *             enabled, then the message will be personalised with the name of the passed {@link
-   *             User}. However if disabled then a generic version fo the message is returned.
+   *             User}. However, if disabled then a generic version fo the message is returned.
    * @return Resulting welcome message.
    * @see User
    */
@@ -86,17 +94,5 @@ public class PropertiesFeatureToggleVersion implements Service {
     }
 
     return "Welcome to the application.";
-  }
-
-  /**
-   * Method that checks if the welcome message to be returned is the enhanced venison or not. For
-   * this service it will see the value of the boolean that was set in the constructor {@link
-   * PropertiesFeatureToggleVersion#PropertiesFeatureToggleVersion(Properties)}
-   *
-   * @return Boolean value {@code true} if enhanced.
-   */
-  @Override
-  public boolean isEnhanced() {
-    return isEnhanced;
   }
 }

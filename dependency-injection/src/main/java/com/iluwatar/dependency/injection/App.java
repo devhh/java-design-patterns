@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +22,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.dependency.injection;
 
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 /**
  * Dependency Injection pattern deals with how objects handle their dependencies. The pattern
- * implements so called inversion of control principle. Inversion of control has two specific rules:
+ * implements so-called inversion of control principle. Inversion of control has two specific rules:
  * - High-level modules should not depend on low-level modules. Both should depend on abstractions.
  * - Abstractions should not depend on details. Details should depend on abstractions.
  *
@@ -37,7 +37,7 @@ import com.google.inject.Injector;
  * concrete implementation which cannot be changed.
  *
  * <p>The second and third wizards({@link AdvancedWizard} and {@link AdvancedSorceress}) are more
- * flexible. They do not depend on any concrete implementation but abstraction. They utilizes
+ * flexible. They do not depend on any concrete implementation but abstraction. They utilize
  * Dependency Injection pattern allowing their {@link Tobacco} dependency to be injected through
  * constructor ({@link AdvancedWizard}) or setter ({@link AdvancedSorceress}). This way, handling
  * the dependency is no longer the wizard's responsibility. It is resolved outside the wizard
@@ -55,18 +55,18 @@ public class App {
    * @param args command line args
    */
   public static void main(String[] args) {
-    SimpleWizard simpleWizard = new SimpleWizard();
+    var simpleWizard = new SimpleWizard();
     simpleWizard.smoke();
 
-    AdvancedWizard advancedWizard = new AdvancedWizard(new SecondBreakfastTobacco());
+    var advancedWizard = new AdvancedWizard(new SecondBreakfastTobacco());
     advancedWizard.smoke();
 
-    AdvancedSorceress advancedSorceress = new AdvancedSorceress();
+    var advancedSorceress = new AdvancedSorceress();
     advancedSorceress.setTobacco(new SecondBreakfastTobacco());
     advancedSorceress.smoke();
 
-    Injector injector = Guice.createInjector(new TobaccoModule());
-    GuiceWizard guiceWizard = injector.getInstance(GuiceWizard.class);
+    var injector = Guice.createInjector(new TobaccoModule());
+    var guiceWizard = injector.getInstance(GuiceWizard.class);
     guiceWizard.smoke();
   }
 }

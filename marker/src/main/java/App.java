@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +47,18 @@ public class App {
    * @param args command line args
    */
   public static void main(String[] args) {
+    final var logger = LoggerFactory.getLogger(App.class);
+    var guard = new Guard();
+    var thief = new Thief();
 
-    final Logger logger = LoggerFactory.getLogger(App.class);
-    Guard guard = new Guard();
-    Thief thief = new Thief();
-
+    //noinspection ConstantConditions
     if (guard instanceof Permission) {
       guard.enter();
     } else {
       logger.info("You have no permission to enter, please leave this area");
     }
 
+    //noinspection ConstantConditions
     if (thief instanceof Permission) {
       thief.steal();
     } else {

@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.spatialpartition;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The quadtree data structure is being used to keep track of the objects' locations. It has the
@@ -37,7 +38,7 @@ public class QuadTree {
   Rect boundary;
   int capacity;
   boolean divided;
-  Hashtable<Integer, Point> points;
+  Map<Integer, Point> points;
   QuadTree northwest;
   QuadTree northeast;
   QuadTree southwest;
@@ -47,7 +48,7 @@ public class QuadTree {
     this.boundary = boundary;
     this.capacity = capacity;
     this.divided = false;
-    this.points = new Hashtable<Integer, Point>();
+    this.points = new HashMap<>();
     this.northwest = null;
     this.northeast = null;
     this.southwest = null;
@@ -76,30 +77,29 @@ public class QuadTree {
   }
 
   void divide() {
-    double x = this.boundary.coordinateX;
-    double y = this.boundary.coordinateY;
-    double width = this.boundary.width;
-    double height = this.boundary.height;
-    Rect nw = new Rect(x - width / 4, y + height / 4, width / 2, height / 2);
+    var x = this.boundary.coordinateX;
+    var y = this.boundary.coordinateY;
+    var width = this.boundary.width;
+    var height = this.boundary.height;
+    var nw = new Rect(x - width / 4, y + height / 4, width / 2, height / 2);
     this.northwest = new QuadTree(nw, this.capacity);
-    Rect ne = new Rect(x + width / 4, y + height / 4, width / 2, height / 2);
+    var ne = new Rect(x + width / 4, y + height / 4, width / 2, height / 2);
     this.northeast = new QuadTree(ne, this.capacity);
-    Rect sw = new Rect(x - width / 4, y - height / 4, width / 2, height / 2);
+    var sw = new Rect(x - width / 4, y - height / 4, width / 2, height / 2);
     this.southwest = new QuadTree(sw, this.capacity);
-    Rect se = new Rect(x + width / 4, y - height / 4, width / 2, height / 2);
+    var se = new Rect(x + width / 4, y - height / 4, width / 2, height / 2);
     this.southeast = new QuadTree(se, this.capacity);
     this.divided = true;
   }
 
-  ArrayList<Point> query(Rect r, ArrayList<Point> relevantPoints) {
+  Collection<Point> query(Rect r, Collection<Point> relevantPoints) {
     //could also be a circle instead of a rectangle
     if (this.boundary.intersects(r)) {
-      for (Enumeration<Integer> e = this.points.keys(); e.hasMoreElements(); ) {
-        Integer i = e.nextElement();
-        if (r.contains(this.points.get(i))) {
-          relevantPoints.add(this.points.get(i));
-        }
-      }
+      this.points
+          .values()
+          .stream()
+          .filter(r::contains)
+          .forEach(relevantPoints::add);
       if (this.divided) {
         this.northwest.query(r, relevantPoints);
         this.northeast.query(r, relevantPoints);

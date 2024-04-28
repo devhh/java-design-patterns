@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 import abstractextensions.CommanderExtension;
 import abstractextensions.SergeantExtension;
 import abstractextensions.SoldierExtension;
-import org.slf4j.Logger;
+import java.util.Optional;
+import java.util.function.Function;
 import org.slf4j.LoggerFactory;
 import units.CommanderUnit;
 import units.SergeantUnit;
@@ -45,9 +47,9 @@ public class App {
   public static void main(String[] args) {
 
     //Create 3 different units
-    Unit soldierUnit = new SoldierUnit("SoldierUnit1");
-    Unit sergeantUnit = new SergeantUnit("SergeantUnit1");
-    Unit commanderUnit = new CommanderUnit("CommanderUnit1");
+    var soldierUnit = new SoldierUnit("SoldierUnit1");
+    var sergeantUnit = new SergeantUnit("SergeantUnit1");
+    var commanderUnit = new CommanderUnit("CommanderUnit1");
 
     //check for each unit to have an extension
     checkExtensionsForUnit(soldierUnit);
@@ -57,32 +59,24 @@ public class App {
   }
 
   private static void checkExtensionsForUnit(Unit unit) {
-    final Logger logger = LoggerFactory.getLogger(App.class);
+    final var logger = LoggerFactory.getLogger(App.class);
 
-    SoldierExtension soldierExtension =
-        (SoldierExtension) unit.getUnitExtension("SoldierExtension");
-    SergeantExtension sergeantExtension =
-        (SergeantExtension) unit.getUnitExtension("SergeantExtension");
-    CommanderExtension commanderExtension =
-        (CommanderExtension) unit.getUnitExtension("CommanderExtension");
+    var name = unit.getName();
+    Function<String, Runnable> func = e -> () -> logger.info("{} without {}", name, e);
 
-    //if unit have extension call the method
-    if (soldierExtension != null) {
-      soldierExtension.soldierReady();
-    } else {
-      logger.info(unit.getName() + " without SoldierExtension");
-    }
+    var extension = "SoldierExtension";
+    Optional.ofNullable(unit.getUnitExtension(extension))
+        .map(e -> (SoldierExtension) e)
+        .ifPresentOrElse(SoldierExtension::soldierReady, func.apply(extension));
 
-    if (sergeantExtension != null) {
-      sergeantExtension.sergeantReady();
-    } else {
-      logger.info(unit.getName() + " without SergeantExtension");
-    }
+    extension = "SergeantExtension";
+    Optional.ofNullable(unit.getUnitExtension(extension))
+        .map(e -> (SergeantExtension) e)
+        .ifPresentOrElse(SergeantExtension::sergeantReady, func.apply(extension));
 
-    if (commanderExtension != null) {
-      commanderExtension.commanderReady();
-    } else {
-      logger.info(unit.getName() + " without CommanderExtension");
-    }
+    extension = "CommanderExtension";
+    Optional.ofNullable(unit.getUnitExtension(extension))
+        .map(e -> (CommanderExtension) e)
+        .ifPresentOrElse(CommanderExtension::commanderReady, func.apply(extension));
   }
 }

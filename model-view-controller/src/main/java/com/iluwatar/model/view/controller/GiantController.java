@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.model.view.controller;
 
 /**
@@ -28,14 +29,15 @@ package com.iluwatar.model.view.controller;
  */
 public class GiantController {
 
-  private GiantModel giant;
-  private GiantView view;
+  private final GiantModel giant;
+  private final GiantView view;
 
   public GiantController(GiantModel giant, GiantView view) {
     this.giant = giant;
     this.view = view;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public Health getHealth() {
     return giant.getHealth();
   }
@@ -44,6 +46,7 @@ public class GiantController {
     this.giant.setHealth(health);
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public Fatigue getFatigue() {
     return giant.getFatigue();
   }
@@ -52,6 +55,7 @@ public class GiantController {
     this.giant.setFatigue(fatigue);
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public Nourishment getNourishment() {
     return giant.getNourishment();
   }

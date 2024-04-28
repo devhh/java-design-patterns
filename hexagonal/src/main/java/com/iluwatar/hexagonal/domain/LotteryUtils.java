@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +22,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.hexagonal.domain;
 
 import com.iluwatar.hexagonal.database.LotteryTicketRepository;
 import com.iluwatar.hexagonal.domain.LotteryTicketCheckResult.CheckResult;
-import java.util.Optional;
 
 /**
  * Lottery utilities.
@@ -43,9 +43,9 @@ public class LotteryUtils {
       LotteryTicketId id,
       LotteryNumbers winningNumbers
   ) {
-    Optional<LotteryTicket> optional = repository.findById(id);
+    var optional = repository.findById(id);
     if (optional.isPresent()) {
-      if (optional.get().getNumbers().equals(winningNumbers)) {
+      if (optional.get().getLotteryNumbers().equals(winningNumbers)) {
         return new LotteryTicketCheckResult(CheckResult.WIN_PRIZE, 1000);
       } else {
         return new LotteryTicketCheckResult(CheckResult.NO_PRIZE);

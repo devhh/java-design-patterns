@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,26 +22,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.event.queue;
 
 import java.io.File;
 import java.io.IOException;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class implements the Event Queue pattern.
  *
  * @author mkuprivecz
  */
+@Slf4j
 public class Audio {
-  private static final Logger LOGGER = LoggerFactory.getLogger(Audio.class);
   private static final Audio INSTANCE = new Audio();
 
   private static final int MAX_PENDING = 16;
@@ -50,7 +50,8 @@ public class Audio {
 
   private volatile Thread updateThread = null;
 
-  private PlayMessage[] pendingAudio = new PlayMessage[MAX_PENDING];
+  @Getter
+  private final PlayMessage[] pendingAudio = new PlayMessage[MAX_PENDING];
 
   // Visible only for testing purposes
   Audio() {
@@ -82,8 +83,8 @@ public class Audio {
   }
 
   /**
-   * Starts the thread for the Update Method pattern if it was not started previously. Also when the
-   * thread is is ready initializes the indexes of the queue
+   * Starts the thread for the Update Method pattern if it was not started previously. Also, when the
+   * thread is ready initializes the indexes of the queue
    */
   public void init() {
     if (updateThread == null) {
@@ -116,10 +117,11 @@ public class Audio {
   public void playSound(AudioInputStream stream, float volume) {
     init();
     // Walk the pending requests.
-    for (int i = headIndex; i != tailIndex; i = (i + 1) % MAX_PENDING) {
-      if (getPendingAudio()[i].getStream() == stream) {
+    for (var i = headIndex; i != tailIndex; i = (i + 1) % MAX_PENDING) {
+      var playMessage = getPendingAudio()[i];
+      if (playMessage.getStream() == stream) {
         // Use the larger of the two volumes.
-        getPendingAudio()[i].setVolume(Math.max(volume, getPendingAudio()[i].getVolume()));
+        playMessage.setVolume(Math.max(volume, playMessage.getVolume()));
 
         // Don't need to enqueue.
         return;
@@ -137,15 +139,14 @@ public class Audio {
     if (headIndex == tailIndex) {
       return;
     }
-    Clip clip = null;
     try {
-      AudioInputStream audioStream = getPendingAudio()[headIndex].getStream();
+      var audioStream = getPendingAudio()[headIndex].getStream();
       headIndex++;
-      clip = AudioSystem.getClip();
+      var clip = AudioSystem.getClip();
       clip.open(audioStream);
       clip.start();
     } catch (LineUnavailableException e) {
-      LOGGER.trace("Error occoured while loading the audio: The line is unavailable", e);
+      LOGGER.trace("Error occurred while loading the audio: The line is unavailable", e);
     } catch (IOException e) {
       LOGGER.trace("Input/Output error while loading the audio", e);
     } catch (IllegalArgumentException e) {
@@ -165,14 +166,4 @@ public class Audio {
       throws UnsupportedAudioFileException, IOException {
     return AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
   }
-
-  /**
-   * Returns with the message array of the queue.
-   *
-   * @return PlayMessage[]
-   */
-  public PlayMessage[] getPendingAudio() {
-    return pendingAudio;
-  }
-
 }

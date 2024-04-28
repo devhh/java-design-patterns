@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +22,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.hexagonal.domain;
-
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for lottery ticket id
@@ -35,12 +36,12 @@ class LotteryTicketIdTest {
 
   @Test
   void testEquals() {
-    LotteryTicketId ticketId1 = new LotteryTicketId();
-    LotteryTicketId ticketId2 = new LotteryTicketId();
-    LotteryTicketId ticketId3 = new LotteryTicketId();
+    var ticketId1 = new LotteryTicketId();
+    var ticketId2 = new LotteryTicketId();
+    var ticketId3 = new LotteryTicketId();
     assertNotEquals(ticketId1, ticketId2);
     assertNotEquals(ticketId2, ticketId3);
-    LotteryTicketId ticketId4 = new LotteryTicketId(ticketId1.getId());
+    var ticketId4 = new LotteryTicketId(ticketId1.getId());
     assertEquals(ticketId1, ticketId4);
   }
 }

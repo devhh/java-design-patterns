@@ -1,6 +1,8 @@
 /*
+ * This project is licensed under the MIT license. Module model-view-viewmodel is using ZK framework licensed under LGPL (see lgpl-3.0.txt).
+ *
  * The MIT License
- * Copyright © 2014-2019 Ilkka Seppälä
+ * Copyright © 2014-2022 Ilkka Seppälä
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +22,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package com.iluwatar.stepbuilder;
 
 import java.util.ArrayList;
@@ -105,7 +106,7 @@ public final class CharacterStepBuilder {
     private String wizardClass;
     private String weapon;
     private String spell;
-    private List<String> abilities = new ArrayList<>();
+    private final List<String> abilities = new ArrayList<>();
 
     @Override
     public ClassStep name(String name) {
@@ -165,7 +166,7 @@ public final class CharacterStepBuilder {
 
     @Override
     public Character build() {
-      Character character = new Character(name);
+      var character = new Character(name);
 
       if (fighterClass != null) {
         character.setFighterClass(fighterClass);
